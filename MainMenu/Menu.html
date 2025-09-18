@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Main Menu - Persatuan Anak Kelantan</title>
+    <link rel="stylesheet" type="text/css" href="../Styles.css">
+</head>
+
+<body>
+    <div class="menu-container">
+        <div class="welcome-header">
+            <h1>🏠 Main Menu</h1>
+            <h2>Persatuan Anak Kelantan</h2>
+        </div>
+        
+        <div class="user-info" id="userInfo">
+            <p><strong>Welcome, <span id="userName">User</span>!</strong></p>
+            <p>Role: <span id="userRole">Member</span></p>
+            <p>Email: <span id="userEmail">user@example.com</span></p>
+        </div>
+        
+        <div id="message" class="message"></div>
+        
+        <div class="menu-buttons">
+            <button class="menu-btn" onclick="alert('Member Management - Coming Soon!')">
+                👥 Member Management
+            </button>
+            <button class="menu-btn" onclick="alert('Events - Coming Soon!')">
+                📅 Events
+            </button>
+            <button class="menu-btn" onclick="alert('News - Coming Soon!')">
+                📰 News
+            </button>
+            <button class="menu-btn" onclick="alert('Gallery - Coming Soon!')">
+                🖼️ Gallery
+            </button>
+            <button class="menu-btn" onclick="alert('Contact - Coming Soon!')">
+                📞 Contact
+            </button>
+            <button class="menu-btn" onclick="alert('Settings - Coming Soon!')">
+                ⚙️ Settings
+            </button>
+        </div>
+        
+        <button class="logout-btn" onclick="logout()">
+            🚪 Logout
+        </button>
+    </div>
+
+    <script src="menu.js"></script>
+
+    
+</body>
+</html>

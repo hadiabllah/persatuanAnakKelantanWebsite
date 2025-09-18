@@ -40,3 +40,71 @@ body {
 .login-container button:hover {
     background: #0056b3;
 }
+
+/* Message Styles */
+.message {
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 4px;
+    display: none;
+}
+
+/* Main Menu Styles */
+.menu-container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 30px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.welcome-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.user-info {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.menu-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.menu-btn {
+    padding: 15px 20px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.menu-btn:hover {
+    background: #0056b3;
+}
+
+.logout-btn {
+    background: #dc3545;
+    padding: 10px 20px;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    float: right;
+    transition: background-color 0.3s;
+}
+
+.logout-btn:hover {
+    background: #c82333;
+}
