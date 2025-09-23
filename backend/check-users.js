@@ -19,6 +19,7 @@ const checkUsers = async () => {
       console.log(`- Username: ${user.username}`);
       console.log(`- Email: ${user.email}`);
       console.log(`- Full Name: ${user.fullName}`);
+      console.log(`- IC Number: ${user.icNumber || 'N/A'}`);
       console.log(`- Role: ${user.role}`);
       console.log(`- Created: ${user.createdAt}`);
     });

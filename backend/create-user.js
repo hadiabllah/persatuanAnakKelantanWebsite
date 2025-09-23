@@ -16,13 +16,13 @@ const createTestUser = async () => {
       password: 'password123',
       fullName: 'Administrator',
       role: 'admin'
-    });
+    }); 
 
     await testUser.save();
     console.log('✅ Test user created successfully!');
     console.log('Username: admin');
     console.log('Password: password123');
-    console.log('Email: admin@example.com');
+    console.log('Email: admin@example.com'); 
 
     await mongoose.disconnect();
     console.log('Disconnected from MongoDB');

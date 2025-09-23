@@ -21,6 +21,9 @@
         <div id="message" class="message"></div>
         
         <div class="menu-buttons">
+            <button id="btnAddUser" class="menu-btn" onclick="openAddUser()" style="display:none;">
+                ➕ Add User
+            </button>
             <button class="menu-btn" onclick="alert('Member Management - Coming Soon!')">
                 👥 Member Management
             </button>
@@ -44,6 +47,41 @@
         <button class="logout-btn" onclick="logout()">
             🚪 Logout
         </button>
+    </div>
+
+    <!-- Add User Inline Form -->
+    <div id="addUserSection" style="display:none; max-width:800px; margin: 16px auto;">
+        <div style="background:#ffffff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+            <h3 style="margin-top:0;">Add New User</h3>
+            <form id="addUserForm">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                    <div>
+                        <label for="au_username">Username</label>
+                        <input id="au_username" name="username" type="text" required minlength="3" maxlength="30" style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
+                    </div>
+                    <div>
+                        <label for="au_email">Email</label>
+                        <input id="au_email" name="email" type="email" required style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
+                    </div>
+                    <div>
+                        <label for="au_ic">IC Number</label>
+                        <input id="au_ic" name="icNumber" type="text" placeholder="e.g. 901010-10-1010" style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
+                    </div>
+                    <div>
+                        <label for="au_fullName">Full Name</label>
+                        <input id="au_fullName" name="fullName" type="text" required style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
+                    </div>
+                    <div>
+                        <label for="au_password">Password</label>
+                        <input id="au_password" name="password" type="password" required minlength="6" style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
+                    </div>
+                </div>
+                <div style="margin-top:16px; display:flex; gap:8px;">
+                    <button type="submit" class="menu-btn">Create User</button>
+                    <button type="button" class="logout-btn" onclick="closeAddUser()">Cancel</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <script src="menu.js"></script>

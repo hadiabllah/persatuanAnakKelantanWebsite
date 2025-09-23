@@ -37,9 +37,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     showMessage('message', 'Login successful! Redirecting...', false);
                     
-                    // Redirect to menu after 1 second
+                    // Redirect by role
                     setTimeout(() => {
-                        window.location.href = '../MainMenu/Menu.html';
+                        if (data.user.role === 'admin') {
+                            window.location.href = '../MainMenu/Menu.html';
+                        } else {
+                            window.location.href = '../MainMenu/Menu.html';
+                        }
                     }, 1000);
                 } else {
                     showMessage('message', data.message, true);
@@ -63,7 +67,11 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                window.location.href = '../MainMenu/Menu.html';
+                if (data.user.role === 'admin') {
+                    window.location.href = '../MainMenu/Menu.html';
+                } else {
+                    window.location.href = '../MainMenu/Menu.html';
+                }
             } else {
                 localStorage.removeItem('token');
                 localStorage.removeItem('user');

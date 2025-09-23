@@ -27,6 +27,11 @@ const userSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
+  icNumber: {
+    type: String,
+    required: false,
+    trim: true
+  },
   role: {
     type: String,
     enum: ['admin', 'member', 'user'],
