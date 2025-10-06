@@ -228,4 +228,39 @@ router.get('/verify', async (req, res) => {
   }
 });
 
+// Admin-only: list users
+router.get('/users', authenticate, requireAdmin, async (req, res) => {
+  try {
+    const users = await User.find({}, 'username email fullName icNumber role createdAt').sort({ createdAt: -1 });
+    res.json({
+      success: true,
+      users
+    });
+  } catch (error) {
+    console.error('List users error:', error);
+    res.status(500).json({ success: false, message: 'Server error fetching users' });
+  }
+});
+
+// Admin-only: delete user by id
+router.delete('/users/:id', authenticate, requireAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // prevent admin from deleting self
+    if (req.user && String(req.user._id) === String(id)) {
+      return res.status(400).json({ success: false, message: 'You cannot delete your own account' });
+    }
+
+    const deleted = await User.findByIdAndDelete(id);
+    if (!deleted) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    res.json({ success: true, message: 'User deleted', userId: id });
+  } catch (error) {
+    console.error('Delete user error:', error);
+    res.status(500).json({ success: false, message: 'Server error deleting user' });
+  }
+});
+
 module.exports = router;

@@ -24,7 +24,7 @@
             <button id="btnAddUser" class="menu-btn" onclick="openAddUser()" style="display:none;">
                 ➕ Add User
             </button>
-            <button class="menu-btn" onclick="alert('Member Management - Coming Soon!')">
+            <button class="menu-btn" onclick="openUsers()">
                 👥 Member Management
             </button>
             <button class="menu-btn" onclick="alert('Events - Coming Soon!')">
@@ -47,6 +47,34 @@
         <button class="logout-btn" onclick="logout()">
             🚪 Logout
         </button>
+    </div>
+
+    <!-- Users (Member Management) Section -->
+    <div id="usersSection" style="display:none; max-width:1000px; margin: 16px auto;">
+        <div style="background:#ffffff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <h3 style="margin:0;">Members</h3>
+                <button type="button" class="logout-btn" onclick="closeUsers()">Close</button>
+            </div>
+            <div style="overflow:auto;">
+                <table style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr style="text-align:left; border-bottom:1px solid #eee;">
+                            <th style="padding:8px;">#</th>
+                            <th style="padding:8px;">Username</th>
+                            <th style="padding:8px;">Full Name</th>
+                            <th style="padding:8px;">Email</th>
+                            <th style="padding:8px;">IC Number</th>
+                            <th style="padding:8px;">Role</th>
+                            <th style="padding:8px;">Created</th>
+                            <th style="padding:8px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     <!-- Add User Inline Form -->
