@@ -77,6 +77,10 @@ async function verifyToken() {
             const isAdmin = data.user.role === 'admin';
             const btn = document.getElementById('btnAddUser');
             if (btn) { btn.style.display = isAdmin ? 'inline-block' : 'none'; }
+            const btnMember = document.getElementById('btnMemberMgmt');
+            if (btnMember) { btnMember.style.display = isAdmin ? 'inline-block' : 'none'; }
+            const btnQR = document.getElementById('btnQR');
+            if (btnQR) { btnQR.style.display = isAdmin ? 'inline-block' : 'none'; }
             // Also hide the form for non-admins if visible
             if (!isAdmin) { closeAddUser(); }
         }
@@ -94,6 +98,17 @@ async function verifyToken() {
 // Initialize page
 document.addEventListener('DOMContentLoaded', function() {
     verifyToken();
+    // settings form submit
+    const settingsForm = document.getElementById('settingsForm');
+    if (settingsForm) {
+        settingsForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            updateProfile();
+        });
+    }
+    // default QR URL
+    const qrUrl = document.getElementById('qr_url');
+    if (qrUrl && !qrUrl.value) { qrUrl.value = 'http://localhost:3000/signup'; }
 });
 
 // Fetch and render users
@@ -125,7 +140,7 @@ function renderUsers(users) {
     if (!users.length) {
         const tr = document.createElement('tr');
         const td = document.createElement('td');
-        td.colSpan = 7;
+        td.colSpan = 7; // #, Username, Full Name, Email, IC Number, Role, Actions
         td.style.padding = '12px';
         td.textContent = 'No users found';
         tr.appendChild(td);
@@ -135,15 +150,13 @@ function renderUsers(users) {
     users.forEach((u, idx) => {
         const tr = document.createElement('tr');
         tr.style.borderBottom = '1px solid #f0f0f0';
-        const created = u.createdAt ? new Date(u.createdAt).toLocaleString() : '-';
         const cells = [
             idx + 1,
             u.username || '-',
             u.fullName || '-',
             u.email || '-',
             u.icNumber || '-',
-            u.role || '-',
-            created
+            u.role || '-'
         ];
         cells.forEach(val => {
             const td = document.createElement('td');
@@ -168,6 +181,15 @@ function renderUsers(users) {
 }
 
 function openUsers() {
+    const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+    if (!currentUser || currentUser.role !== 'admin') {
+        showMessage('Admin access required.', true);
+        return;
+    }
+    // Hide Add User form to avoid overlap
+    closeAddUser();
+    closeSettings();
+    closeQR();
     const section = document.getElementById('usersSection');
     if (section) { section.style.display = 'block'; }
     fetchUsers();
@@ -216,7 +238,8 @@ async function addUser() {
             email: formData.get('email'),
             icNumber: formData.get('icNumber'),
             fullName: formData.get('fullName'),
-            password: formData.get('password')
+            password: formData.get('password'),
+            role: (formData.get('role') || 'user').toLowerCase()
         };
 
         const token = localStorage.getItem('token');
@@ -246,6 +269,10 @@ async function addUser() {
 }
 
 function openAddUser() {
+    // Hide Users section to avoid overlap
+    closeUsers();
+    closeSettings();
+    closeQR();
     const section = document.getElementById('addUserSection');
     if (section) { section.style.display = 'block'; }
 }
@@ -253,6 +280,127 @@ function openAddUser() {
 function closeAddUser() {
     const section = document.getElementById('addUserSection');
     if (section) { section.style.display = 'none'; }
+}
+
+function openSettings() {
+    // Hide other sections to avoid overlap
+    closeUsers();
+    closeAddUser();
+    closeQR();
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const nameInput = document.getElementById('set_fullName');
+    if (nameInput) { nameInput.value = user.fullName || ''; }
+    const passInput = document.getElementById('set_password');
+    if (passInput) { passInput.value = ''; }
+    const section = document.getElementById('settingsSection');
+    if (section) { section.style.display = 'block'; }
+}
+
+function closeSettings() {
+    const section = document.getElementById('settingsSection');
+    if (section) { section.style.display = 'none'; }
+}
+
+function openQR() {
+    const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+    if (!currentUser || currentUser.role !== 'admin') {
+        showMessage('Admin access required.', true);
+        return;
+    }
+    // Hide other sections to avoid overlap
+    closeUsers();
+    closeAddUser();
+    closeSettings();
+    const section = document.getElementById('qrSection');
+    if (section) { section.style.display = 'block'; }
+}
+
+function closeQR() {
+    const section = document.getElementById('qrSection');
+    if (section) { section.style.display = 'none'; }
+}
+
+let currentQRCode;
+function generateQR() {
+    const urlInput = document.getElementById('qr_url');
+    const url = (urlInput && urlInput.value) ? urlInput.value.trim() : '';
+    if (!url) { showMessage('Please enter a URL', true); return; }
+    const container = document.getElementById('qrCode');
+    if (!container) { return; }
+    container.innerHTML = '';
+    // eslint-disable-next-line no-undef
+    currentQRCode = new QRCode(container, {
+        text: url,
+        width: 256,
+        height: 256,
+        colorDark : '#000000',
+        colorLight : '#ffffff',
+        correctLevel : QRCode.CorrectLevel.H
+    });
+    const btn = document.getElementById('qrDownloadBtn');
+    if (btn) { btn.style.display = 'inline-block'; }
+}
+
+function downloadQR() {
+    const container = document.getElementById('qrCode');
+    if (!container) { return; }
+    // try canvas first
+    const canvas = container.querySelector('canvas');
+    if (canvas) {
+        const link = document.createElement('a');
+        link.download = 'signup-qr.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        return;
+    }
+    // fallback to img
+    const img = container.querySelector('img');
+    if (img && img.src) {
+        const link = document.createElement('a');
+        link.download = 'signup-qr.png';
+        link.href = img.src;
+        link.click();
+    }
+}
+
+async function updateProfile() {
+    try {
+        const form = document.getElementById('settingsForm');
+        if (!form) { return; }
+        const formData = new FormData(form);
+        const fullName = (formData.get('fullName') || '').toString().trim();
+        const password = (formData.get('password') || '').toString();
+        const payload = {};
+        if (fullName.length > 0) { payload.fullName = fullName; }
+        if (password.length > 0) { payload.password = password; }
+        if (!payload.fullName && !payload.password) {
+            showMessage('Nothing to update.', true);
+            return;
+        }
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_BASE}/auth/me`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+        if (!response.ok || !data.success) {
+            const message = data && data.message ? data.message : 'Failed to update profile';
+            showMessage(message, true);
+            return;
+        }
+        // update local user and UI
+        localStorage.setItem('user', JSON.stringify(data.user));
+        loadUserInfo();
+        showMessage('Profile updated successfully.');
+        closeSettings();
+    } catch (error) {
+        console.error('Update profile error:', error);
+        showMessage('Error updating profile. Please try again.', true);
+    }
 }
 
 // Submit handler for add user form

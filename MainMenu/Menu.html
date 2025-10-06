@@ -24,22 +24,22 @@
             <button id="btnAddUser" class="menu-btn" onclick="openAddUser()" style="display:none;">
                 ➕ Add User
             </button>
-            <button class="menu-btn" onclick="openUsers()">
+            <button id="btnMemberMgmt" class="menu-btn" onclick="openUsers()">
                 👥 Member Management
             </button>
-            <button class="menu-btn" onclick="alert('Events - Coming Soon!')">
-                📅 Events
+            <button class="menu-btn" onclick="alert('Membership Payment - Coming Soon!')">
+                💰 Membership Payment
             </button>
-            <button class="menu-btn" onclick="alert('News - Coming Soon!')">
-                📰 News
+            <button class="menu-btn" onclick="alert('Meeting Attendance - Coming Soon!')">
+                🗓️ Neeting Attendance
             </button>
-            <button class="menu-btn" onclick="alert('Gallery - Coming Soon!')">
-                🖼️ Gallery
+            <button class="menu-btn" onclick="alert('Meeting Management - Coming Soon!')">
+                🗓️ Meeting Management
             </button>
-            <button class="menu-btn" onclick="alert('Contact - Coming Soon!')">
-                📞 Contact
+            <button id="btnQR" class="menu-btn" onclick="openQR()">
+                🧾 QR Generator
             </button>
-            <button class="menu-btn" onclick="alert('Settings - Coming Soon!')">
+            <button class="menu-btn" onclick="openSettings()">
                 ⚙️ Settings
             </button>
         </div>
@@ -49,6 +49,28 @@
         </button>
     </div>
 
+    <!-- QR Generator Section -->
+    <div id="qrSection" style="display:none; max-width:800px; margin: 16px auto;">
+        <div style="background:#ffffff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <h3 style="margin:0;">QR Generator</h3>
+                <button type="button" class="logout-btn" onclick="closeQR()">Close</button>
+            </div>
+            <div style="display:grid; grid-template-columns:2fr 1fr; gap:12px; align-items:end;">
+                <div>
+                    <label for="qr_url">URL</label>
+                    <input id="qr_url" type="text" value="http://localhost:3000/signup" style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
+                </div>
+                <div>
+                    <button class="menu-btn" onclick="generateQR()">Generate</button>
+                </div>
+            </div>
+            <div id="qrContainer" style="margin-top:16px; display:flex; flex-direction:column; align-items:center; gap:8px;">
+                <div id="qrCode"></div>
+                <button id="qrDownloadBtn" class="menu-btn" style="display:none;" onclick="downloadQR()">Download PNG</button>
+            </div>
+        </div>
+    </div>
     <!-- Users (Member Management) Section -->
     <div id="usersSection" style="display:none; max-width:1000px; margin: 16px auto;">
         <div style="background:#ffffff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
@@ -66,7 +88,6 @@
                             <th style="padding:8px;">Email</th>
                             <th style="padding:8px;">IC Number</th>
                             <th style="padding:8px;">Role</th>
-                            <th style="padding:8px;">Created</th>
                             <th style="padding:8px;">Actions</th>
                         </tr>
                     </thead>
@@ -103,6 +124,15 @@
                         <label for="au_password">Password</label>
                         <input id="au_password" name="password" type="password" required minlength="6" style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
                     </div>
+                    <div>
+                        <label for="au_role">Role</label>
+                        <select id="au_role" name="role" style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
+                            <option value="user" selected>User</option>
+                            <option value="secretary">Secretary</option>
+                            <option value="treasurer">Treasurer</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
                 </div>
                 <div style="margin-top:16px; display:flex; gap:8px;">
                     <button type="submit" class="menu-btn">Create User</button>
@@ -112,6 +142,33 @@
         </div>
     </div>
 
+    <!-- Settings Section -->
+    <div id="settingsSection" style="display:none; max-width:800px; margin: 16px auto;">
+        <div style="background:#ffffff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <h3 style="margin:0;">Settings</h3>
+                <button type="button" class="logout-btn" onclick="closeSettings()">Close</button>
+            </div>
+            <form id="settingsForm">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                    <div>
+                        <label for="set_fullName">Full Name</label>
+                        <input id="set_fullName" name="fullName" type="text" minlength="1" style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
+                    </div>
+                    <div>
+                        <label for="set_password">New Password (optional)</label>
+                        <input id="set_password" name="password" type="password" minlength="6" placeholder="Leave blank to keep current" style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
+                    </div>
+                </div>
+                <div style="margin-top:16px; display:flex; gap:8px;">
+                    <button type="submit" class="menu-btn">Save Changes</button>
+                    <button type="button" class="logout-btn" onclick="closeSettings()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="menu.js"></script>
 
     

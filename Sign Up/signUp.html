@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sign Up - Persatuan Anak Kelantan</title>
+    <link rel="stylesheet" type="text/css" href="../Styles.css">
+</head>
+
+<body>
+    <form class="login-container" id="signupForm">
+        <h2>Sign Up</h2>
+        <div id="message" class="message"></div>
+        <input type="text" id="su_fullName" name="fullName" placeholder="Full Name" required>
+        <input type="text" id="su_username" name="username" placeholder="Username" required minlength="3" maxlength="30">
+        <input type="email" id="su_email" name="email" placeholder="Email" required>
+        <input type="text" id="su_ic" name="icNumber" placeholder="IC Number (optional)">
+        <input type="password" id="su_password" name="password" placeholder="Password" required minlength="6">
+        <button type="submit">Create Account</button>
+        <div style="margin-top:10px;">
+            <a href="../Login/login.html">Already have an account? Login</a>
+        </div>
+    </form>
+
+    <script src="../Sign Up/signUp.js"></script>
+
+</body>
+</html>
+

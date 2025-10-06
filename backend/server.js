@@ -45,6 +45,10 @@ app.get('/menu', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'MainMenu', 'Menu.html'));
 });
 
+app.get('/signup', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'Sign Up', 'signUp.html'));
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);

@@ -176,7 +176,11 @@ router.post('/create', authenticate, requireAdmin, async (req, res) => {
       return res.status(400).json({ success: false, message: 'Username or email already exists' });
     }
 
-    const user = new User({ username, email, password, fullName, icNumber, role: role || 'user' });
+    // validate role
+    const allowedRoles = ['admin', 'secretary', 'treasurer', 'user'];
+    const roleToSet = allowedRoles.includes((role || '').toLowerCase()) ? role.toLowerCase() : 'user';
+
+    const user = new User({ username, email, password, fullName, icNumber, role: roleToSet });
     await user.save();
 
     res.status(201).json({ success: true, message: 'User created', user: { id: user._id, username: user.username, email: user.email, fullName: user.fullName, icNumber: user.icNumber, role: user.role } });
@@ -225,6 +229,45 @@ router.get('/verify', async (req, res) => {
       success: false,
       message: 'Invalid token'
     });
+  }
+});
+
+// Update current user's profile (name/password)
+router.put('/me', authenticate, async (req, res) => {
+  try {
+    const { fullName, password } = req.body;
+
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    if (fullName && typeof fullName === 'string' && fullName.trim().length > 0) {
+      user.fullName = fullName.trim();
+    }
+    if (password && typeof password === 'string') {
+      if (password.length < 6) {
+        return res.status(400).json({ success: false, message: 'Password must be at least 6 characters' });
+      }
+      user.password = password; // will be hashed by pre-save hook
+    }
+
+    await user.save();
+
+    res.json({
+      success: true,
+      message: 'Profile updated',
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+        fullName: user.fullName,
+        role: user.role
+      }
+    });
+  } catch (error) {
+    console.error('Update profile error:', error);
+    res.status(500).json({ success: false, message: 'Server error updating profile' });
   }
 });
 
