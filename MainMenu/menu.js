@@ -358,7 +358,7 @@ function closeSettings() {
 
 function openQR() {
     const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-    if (!currentUser || currentUser.role !== 'admin') {
+    if (!currentUser || (currentUser.role !== 'Pentadbir' && currentUser.role !== 'admin')) {
         showMessage('Admin access required.', true);
         return;
     }
@@ -452,7 +452,7 @@ function updateRSVPStatus(status) {
 
 function openMeetingManagement() {
     const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-    if (!currentUser || currentUser.role !== 'admin') {
+    if (!currentUser || (currentUser.role !== 'Pentadbir' && currentUser.role !== 'admin')) {
         showMessage('Admin access required.', true);
         return;
     }
