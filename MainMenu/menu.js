@@ -115,6 +115,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const occSel = document.getElementById('filter_occupation');
     if (roleSel) roleSel.addEventListener('change', applyFiltersAndRender);
     if (occSel) occSel.addEventListener('change', applyFiltersAndRender);
+    const roleText = document.getElementById('filter_role_text');
+    const occText = document.getElementById('filter_occupation_text');
+    if (roleText) roleText.addEventListener('input', applyFiltersAndRender);
+    if (occText) occText.addEventListener('input', applyFiltersAndRender);
 });
 
 // Fetch and render users
@@ -192,8 +196,12 @@ function renderUsers(users) {
 function applyFiltersAndRender() {
     const roleSel = document.getElementById('filter_role');
     const occSel = document.getElementById('filter_occupation');
+    const roleText = document.getElementById('filter_role_text');
+    const occText = document.getElementById('filter_occupation_text');
     const role = roleSel ? roleSel.value : '';
     const occ = occSel ? occSel.value : '';
+    const roleQ = roleText ? roleText.value.trim().toLowerCase() : '';
+    const occQ = occText ? occText.value.trim().toLowerCase() : '';
     let filtered = allUsers.slice();
     if (role) {
         filtered = filtered.filter(u => (u.role || '') === role);
@@ -201,14 +209,24 @@ function applyFiltersAndRender() {
     if (occ) {
         filtered = filtered.filter(u => (u.occupation || '') === occ);
     }
+    if (roleQ) {
+        filtered = filtered.filter(u => (u.role || '').toLowerCase().includes(roleQ));
+    }
+    if (occQ) {
+        filtered = filtered.filter(u => (u.occupation || '').toLowerCase().includes(occQ));
+    }
     renderUsers(filtered);
 }
 
 function resetFilters() {
     const roleSel = document.getElementById('filter_role');
     const occSel = document.getElementById('filter_occupation');
+    const roleText = document.getElementById('filter_role_text');
+    const occText = document.getElementById('filter_occupation_text');
     if (roleSel) roleSel.value = '';
     if (occSel) occSel.value = '';
+    if (roleText) roleText.value = '';
+    if (occText) occText.value = '';
     applyFiltersAndRender();
 }
 

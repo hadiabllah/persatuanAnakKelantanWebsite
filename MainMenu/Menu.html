@@ -80,13 +80,14 @@
 					<table style="width:100%; border-collapse:collapse;">
 						<thead>
 							<tr style="text-align:left; border-bottom:1px solid #eee;">
-								<th style="padding:8px;">#</th>
-								<th style="padding:8px;">Username</th>
-								<th style="padding:8px;">Full Name</th>
+								<th style="padding:8px;">No</th>
+								<th style="padding:8px;">Nama Pengguna</th>
+								<th style="padding:8px;">Nama Penuh</th>
 								<th style="padding:8px;">Email</th>
-								<th style="padding:8px;">IC Number</th>
-								<th style="padding:8px;">Role</th>
-								<th style="padding:8px;">Actions</th>
+								<th style="padding:8px;">Nombor IC</th>
+								<th style="padding:8px;">Pekerjaan</th>
+								<th style="padding:8px;">Peranan</th>
+								<th style="padding:8px;">Tindakan</th>
 							</tr>
 						</thead>
 						<tbody id="usersTableBody">
@@ -102,7 +103,7 @@
 				<form id="addUserForm">
 					<div style="display:grid; grid-template-columns:1fr; gap:12px;">
 						<div>
-							<label for="au_username">Username</label>
+							<label for="au_username">Nama Pengguna</label>
 							<input id="au_username" name="username" type="text" required minlength="3" maxlength="30" style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
 						</div>
 						<div>
@@ -110,11 +111,11 @@
 							<input id="au_email" name="email" type="email" required style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
 						</div>
 						<div>
-							<label for="au_ic">IC Number</label>
+							<label for="au_ic">Nombor IC</label>
 							<input id="au_ic" name="icNumber" type="text" placeholder="e.g. 901010-10-1010" style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
 						</div>
 						<div>
-							<label for="au_fullName">Full Name</label>
+							<label for="au_fullName">Nama Penuh/label>
 							<input id="au_fullName" name="fullName" type="text" required style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
 						</div>
 						<div>
@@ -122,18 +123,34 @@
 							<input id="au_password" name="password" type="password" required minlength="6" style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
 						</div>
 						<div>
-							<label for="au_role">Role</label>
+							<label for="au_role">Peranan</label>
 							<select id="au_role" name="role" style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
-								<option value="user" selected>User</option>
-								<option value="secretary">Secretary</option>
-								<option value="treasurer">Treasurer</option>
-								<option value="admin">Admin</option>
+								<option value="Ahli" selected>Ahli</option>
+								<option value="Setiausaha">Setiausaha</option>
+								<option value="Bendahari">Bendahari</option>
+								<option value="Pentadbir">Pentadbir</option>
+							</select>
+						</div>
+						<div>
+							<label for="au_occupation">Pekerjaan</label>
+							<select id="au_occupation" name="occupation" style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
+								<option value="" selected>Pilih bidang pekerjaan</option>
+								<option value="Keselamatan">Keselamatan</option>
+								<option value="Perkhidmatan & Hospitaliti">Perkhidmatan & Hospitaliti</option>
+								<option value="Pertanian & Alam Sekitar">Pertanian & Alam Sekitar</option>
+								<option value="Undang-Undang & Pendtadbiran">Undang-Undang & Pendtadbiran</option>
+								<option value="Seni & Kreatif">Seni & Kreatif</option>
+								<option value="Perniagaan & Kewangan">Perniagaan & Kewangan</option>
+								<option value="Pendidikan & Latihan">Pendidikan & Latihan</option>
+								<option value="Sains & Kesihatan">Sains & Kesihatan</option>
+								<option value="Teknologi Maklumat">Teknologi Maklumat</option>
+								<option value="Teknikal & Kejuruteraan">Teknikal & Kejuruteraan</option>
 							</select>
 						</div>
 					</div>
 					<div style="margin-top:16px; display:flex; gap:8px;">
-						<button type="submit" class="menu-btn">Create User</button>
-						<button type="button" class="logout-btn" onclick="closeAddUser()">Cancel</button>
+						<button type="submit" class="menu-btn">Tambah Ahli</button>
+						<button type="button" class="logout-btn" onclick="closeAddUser()">Batal</button>
 					</div>
 				</form>
 			</div>
@@ -142,23 +159,23 @@
 		<div id="settingsSection" style="display:none; margin: 16px 0;">
 			<div style="background:#ffffff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
 				<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-					<h3 style="margin:0;">Settings</h3>
-					<button type="button" class="logout-btn" onclick="closeSettings()">Close</button>
+					<h3 style="margin:0;">Pengaturan</h3>
+					<button type="button" class="logout-btn" onclick="closeSettings()">Tutup</button>
 				</div>
 				<form id="settingsForm">
 					<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
 						<div>
-							<label for="set_fullName">Full Name</label>
+							<label for="set_fullName">Nama Penuh</label>
 							<input id="set_fullName" name="fullName" type="text" minlength="1" style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
 						</div>
 						<div>
-							<label for="set_password">New Password (optional)</label>
+							<label for="set_password">Kata Laluan Baru (pilihan)</label>
 							<input id="set_password" name="password" type="password" minlength="6" placeholder="Leave blank to keep current" style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
 						</div>
 					</div>
 					<div style="margin-top:16px; display:flex; gap:8px;">
-						<button type="submit" class="menu-btn">Save Changes</button>
-						<button type="button" class="logout-btn" onclick="closeSettings()">Cancel</button>
+						<button type="submit" class="menu-btn">Simpan Perubahan</button>
+						<button type="button" class="logout-btn" onclick="closeSettings()">Batal</button>
 					</div>
 				</form>
 			</div>
@@ -188,7 +205,7 @@
             </div>
             <div id="qrContainer" style="margin-top:16px; display:flex; flex-direction:column; align-items:center; gap:8px;">
                 <div id="qrCode"></div>
-                <button id="qrDownloadBtn" class="menu-btn" style="display:none;" onclick="downloadQR()">Download PNG</button>
+                <button id="qrDownloadBtn" class="menu-btn" style="display:none;" onclick="downloadQR()">Muat Turun PNG</button>
             </div>
         </div>
     </div>
