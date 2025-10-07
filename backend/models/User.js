@@ -32,10 +32,25 @@ const userSchema = new mongoose.Schema({
     required: false,
     trim: true
   },
+  occupation: {
+    type: String,
+    enum: [
+      'Keselamatan',
+      'Perkhidmatan & Hospitaliti',
+      'Pertanian & Alam Sekitar',
+      'Undang-Undang & Pendtadbiran',
+      'Seni & Kreatif',
+      'Perniagaan & Kewangan',
+      'Pendidikan & Latihan',
+      'Sains & Kesihatan',
+      'Teknologi Maklumat',
+      'Teknikal & Kejuruteraan'
+    ]
+  },
   role: {
     type: String,
-    enum: ['admin', 'secretary', 'treasurer', 'user'],
-    default: 'user'
+    enum: ['Pentadbir', 'Setiausaha', 'Bendahari', 'Ahli'],
+    default: 'Ahli'
   },
   isActive: {
     type: Boolean,

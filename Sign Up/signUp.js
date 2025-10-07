@@ -17,12 +17,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const username = document.getElementById('su_username').value;
         const email = document.getElementById('su_email').value;
         const icNumber = document.getElementById('su_ic').value;
+        const occupation = document.getElementById('su_occupation') ? document.getElementById('su_occupation').value : '';
         const password = document.getElementById('su_password').value;
         try {
             const response = await fetch(`${API_BASE}/auth/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ fullName, username, email, icNumber, password })
+                body: JSON.stringify({ fullName, username, email, icNumber, occupation, password })
             });
             const data = await response.json();
             if (!response.ok || !data.success) {

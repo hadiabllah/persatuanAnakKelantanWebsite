@@ -74,7 +74,7 @@ async function verifyToken() {
             loadUserInfo();
 
             // Show Add User button for admin only
-            const isAdmin = data.user.role === 'admin';
+            const isAdmin = data.user.role === 'Pentadbir' || data.user.role === 'admin';
             const btn = document.getElementById('btnAddUser');
             if (btn) { btn.style.display = isAdmin ? 'inline-block' : 'none'; }
             const btnMember = document.getElementById('btnMemberMgmt');
@@ -114,6 +114,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Fetch and render users
+let allUsers = [];
 async function fetchUsers() {
     try {
         const token = localStorage.getItem('token');
@@ -128,7 +129,8 @@ async function fetchUsers() {
             showMessage(message, true);
             return;
         }
-        renderUsers(data.users || []);
+        allUsers = data.users || [];
+        applyFiltersAndRender();
     } catch (error) {
         console.error('Fetch users error:', error);
         showMessage('Error fetching users. Please try again.', true);
@@ -142,7 +144,7 @@ function renderUsers(users) {
     if (!users.length) {
         const tr = document.createElement('tr');
         const td = document.createElement('td');
-        td.colSpan = 7; // #, Username, Full Name, Email, IC Number, Role, Actions
+        td.colSpan = 8; // #, Username, Full Name, Email, IC Number, Occupation, Role, Actions
         td.style.padding = '12px';
         td.textContent = 'No users found';
         tr.appendChild(td);
@@ -158,6 +160,7 @@ function renderUsers(users) {
             u.fullName || '-',
             u.email || '-',
             u.icNumber || '-',
+            u.occupation || '-',
             u.role || '-'
         ];
         cells.forEach(val => {
@@ -182,9 +185,46 @@ function renderUsers(users) {
     });
 }
 
+function applyFiltersAndRender() {
+    const roleSel = document.getElementById('filter_role');
+    const occSel = document.getElementById('filter_occupation');
+    const roleText = document.getElementById('filter_role_text');
+    const occText = document.getElementById('filter_occupation_text');
+    const role = roleSel ? roleSel.value : '';
+    const occ = occSel ? occSel.value : '';
+    const roleQ = roleText ? roleText.value.trim().toLowerCase() : '';
+    const occQ = occText ? occText.value.trim().toLowerCase() : '';
+    let filtered = allUsers.slice();
+    if (role) {
+        filtered = filtered.filter(u => (u.role || '') === role);
+    }
+    if (occ) {
+        filtered = filtered.filter(u => (u.occupation || '') === occ);
+    }
+    if (roleQ) {
+        filtered = filtered.filter(u => (u.role || '').toLowerCase().includes(roleQ));
+    }
+    if (occQ) {
+        filtered = filtered.filter(u => (u.occupation || '').toLowerCase().includes(occQ));
+    }
+    renderUsers(filtered);
+}
+
+function resetFilters() {
+    const roleSel = document.getElementById('filter_role');
+    const occSel = document.getElementById('filter_occupation');
+    const roleText = document.getElementById('filter_role_text');
+    const occText = document.getElementById('filter_occupation_text');
+    if (roleSel) roleSel.value = '';
+    if (occSel) occSel.value = '';
+    if (roleText) roleText.value = '';
+    if (occText) occText.value = '';
+    applyFiltersAndRender();
+}
+
 function openUsers() {
     const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-    if (!currentUser || currentUser.role !== 'admin') {
+    if (!currentUser || (currentUser.role !== 'Pentadbir' && currentUser.role !== 'admin')) {
         showMessage('Admin access required.', true);
         return;
     }
@@ -245,7 +285,8 @@ async function addUser() {
             icNumber: formData.get('icNumber'),
             fullName: formData.get('fullName'),
             password: formData.get('password'),
-            role: (formData.get('role') || 'user').toLowerCase()
+            role: (formData.get('role') || 'Ahli'),
+            occupation: (formData.get('occupation') || '')
         };
 
         const token = localStorage.getItem('token');

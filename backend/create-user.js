@@ -15,7 +15,8 @@ const createTestUser = async () => {
       email: 'admin@example.com',
       password: 'password123',
       fullName: 'Administrator',
-      role: 'admin'
+      occupation: 'Teknologi Maklumat',
+      role: 'Pentadbir'
     }); 
 
     await testUser.save();
