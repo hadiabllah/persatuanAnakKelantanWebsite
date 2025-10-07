@@ -44,8 +44,8 @@ body.page-mainmenu {
     margin-bottom: 20px;
 }
 .brand-logo {
-    width: 96px;
-    height: 96px;
+    width: 150px;
+    height: 150px;
     margin: 0 auto 12px auto;
     border-radius: 50%;
     background: repeating-linear-gradient(45deg, #e5e5e5, #e5e5e5 10px, #d9d9d9 10px, #d9d9d9 20px);

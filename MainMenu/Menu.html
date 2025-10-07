@@ -7,10 +7,13 @@
 
 <body class="page-mainmenu">
     <div class="menu-container">
-        <div class="welcome-header">
-            <h1>🏠 LAMAN UTAMA</h1>
-            <h2>PORTAL DIGITAL PAKATAN DARULNAIM</h2>
-        </div>
+		<div class="welcome-header">
+			<div style="display:flex; align-items:center; gap:10px;">
+				<img src="../gmba/logo.jpg" alt="Logo" style="height:200px; width:200px; object-fit:contain;">
+				<h1 style="margin:0;">    LAMAN UTAMA</h1>
+			</div>
+			<h2>PORTAL DIGITAL PAKATAN DARULNAIM</h2>
+		</div>
         
         <div class="user-info" id="userInfo">
             <p><strong>Selamat Datang, <span id="userName">User</span>!</strong></p>
@@ -78,8 +81,8 @@
 						</div>
 						<div style="display:grid; grid-template-columns:1fr; gap:8px;">
 							<div><strong>Title:</strong> <span id="meet_title">Mesyuarat Bulanan Persatuan</span></div>
-							<div><strong>Tanggal & Masa:</strong> <span id="meet_datetime">15 Dis 2025, 8:00 malam</span></div>
-							<div><strong>Tempat:</strong> <span id="meet_place">Dewan Serbaguna, Kota Bharu</span></div>
+							<div><strong>Tanggal & Masa:</strong> <span id="meet_datetime">25 Nov 2025, 8:00 malam</span></div>
+							<div><strong>Tempat:</strong> <span id="meet_place">Dewan Utama, Kota Bharu</span></div>
 							<div>
 								<strong>Agenda:</strong>
 								<ol id="meet_agenda" style="margin:6px 0 0 18px;">
@@ -242,7 +245,7 @@
             <div style="background:#ffffff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
                 <h3 style="margin-top:0;">Tambah Ahli Baharu</h3>
                 <form id="addUserForm">
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                    <div style="display:grid; grid-template-columns:1fr; gap:12px;">
                         <div>
                             <label for="au_username">Nama Pengguna</label>
                             <input id="au_username" name="username" type="text" required minlength="3" maxlength="30" style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
