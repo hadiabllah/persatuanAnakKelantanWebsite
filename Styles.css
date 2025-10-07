@@ -11,6 +11,13 @@ body {
     align-items: center;
     justify-content: center;
 }
+/* Main Menu specific layout overrides */
+body.page-mainmenu {
+    display: block;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
 .login-container {
     background: #fff;
     padding: 32px 24px;
@@ -86,12 +93,26 @@ body {
 
 /* Main Menu Styles */
 .menu-container {
-    max-width: 800px;
-    margin: 50px auto;
-    padding: 30px;
+    width: 100%;
+    max-width: 1100px;
+    min-height: 100vh;
+    margin: 0 auto;
+    padding: 24px;
     background: white;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 0;
+    box-shadow: none;
+}
+
+/* Two-column layout: buttons on left, content on right */
+.menu-layout {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 20px;
+    align-items: start;
+}
+
+.menu-panels > div { /* space between panels inside container */
+    width: 100%;
 }
 
 .welcome-header {
@@ -108,9 +129,9 @@ body {
 
 .menu-buttons {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-    margin-bottom: 30px;
+    grid-template-columns: 1fr; /* vertical list in the left column */
+    gap: 12px;
+    margin-bottom: 0;
 }
 
 .menu-btn {
@@ -128,6 +149,29 @@ body {
     background: #0056b3;
 }
 
+/* Each button inside its own card */
+.menu-card {
+    background: #ffffff;
+    border: 1px solid #eaeaea;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+/* Responsive: stack on small screens */
+@media (max-width: 900px) {
+    .menu-layout {
+        grid-template-columns: 1fr;
+    }
+    .menu-buttons {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+}
+
 .logout-btn {
     background: #dc3545;
     padding: 10px 20px;
@@ -136,7 +180,6 @@ body {
     border-radius: 5px;
     cursor: pointer;
     font-size: 14px;
-    float: right;
     transition: background-color 0.3s;
 }
 
@@ -144,8 +187,48 @@ body {
     background: #c82333;
 }
 
-/* Users table: keep Occupation on one line */
-#usersSection table th:nth-child(6),
-#usersSection table td:nth-child(6) {
+/* Top navigation */
+.top-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #ffffff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+}
+.nav-title {
+    font-size: 16px;
+    margin-right: 12px;
     white-space: nowrap;
+}
+.nav-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.top-nav .logout-btn {
+    margin-left: auto;
+}
+
+/* Center the members/users list section content area */
+#usersSection { 
+    max-width: none; 
+    margin: 0; 
+}
+
+/* Make users table font smaller and fill the panel */
+#usersSection table {
+    font-size: 13px;
+}
+
+/* Make Add User inputs shorter */
+#addUserSection input,
+#addUserSection select {
+    padding: 6px !important;
+    font-size: 14px;
 }
