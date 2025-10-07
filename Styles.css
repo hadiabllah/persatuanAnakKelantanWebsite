@@ -5,7 +5,12 @@
 
 body {
     font-family: Arial, sans-serif;
-    background: #f2f2f2;
+    background-color: #f2f2f2;
+    background-image: linear-gradient(rgba(255,255,255,0.65), rgba(255,255,255,0.65)), url('gmba/kelantan.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
     display: flex;
     height: 100vh;
     align-items: center;
@@ -127,6 +132,19 @@ body.page-mainmenu {
     margin-bottom: 20px;
 }
 
+/* News styles */
+.news-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+}
+.news-card {
+    background: #fafafa;
+    border: 1px solid #eee;
+    border-radius: 6px;
+    padding: 12px;
+}
+
 .menu-buttons {
     display: grid;
     grid-template-columns: 1fr; /* vertical list in the left column */
@@ -231,4 +249,36 @@ body.page-mainmenu {
 #addUserSection select {
     padding: 6px !important;
     font-size: 14px;
+}
+
+/* Compact inline fields for Yuran Keahlian */
+#paymentSection .field-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: 4px;
+}
+#paymentSection .field-row label {
+    font-size: 14px;
+    margin-bottom: 2px;
+}
+#paymentSection .field-row input {
+    padding: 6px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+}
+
+/* Arrange three field-rows side-by-side */
+#paymentSection .payment-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(220px, 1fr));
+    gap: 12px;
+}
+
+@media (max-width: 900px) {
+    #paymentSection .payment-grid {
+        grid-template-columns: 1fr;
+    }
 }

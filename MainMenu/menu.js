@@ -109,6 +109,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // default QR URL
     const qrUrl = document.getElementById('qr_url');
     if (qrUrl && !qrUrl.value) { qrUrl.value = 'http://localhost:3000/signup'; }
+    // Show home by default
+    openHome();
 });
 
 // Fetch and render users
@@ -188,6 +190,10 @@ function openUsers() {
     }
     // Hide Add User form to avoid overlap
     closeAddUser();
+    closePayment();
+    closeHome();
+    closeMeeting();
+    closeMeetingManagement();
     closeSettings();
     closeQR();
     const section = document.getElementById('usersSection');
@@ -273,6 +279,10 @@ function openAddUser() {
     closeUsers();
     closeSettings();
     closeQR();
+    closePayment();
+    closeHome();
+    closeMeeting();
+    closeMeetingManagement();
     const section = document.getElementById('addUserSection');
     if (section) { section.style.display = 'block'; }
 }
@@ -287,6 +297,10 @@ function openSettings() {
     closeUsers();
     closeAddUser();
     closeQR();
+    closePayment();
+    closeHome();
+    closeMeeting();
+    closeMeetingManagement();
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const nameInput = document.getElementById('set_fullName');
     if (nameInput) { nameInput.value = user.fullName || ''; }
@@ -311,6 +325,10 @@ function openQR() {
     closeUsers();
     closeAddUser();
     closeSettings();
+    closePayment();
+    closeHome();
+    closeMeeting();
+    closeMeetingManagement();
     const section = document.getElementById('qrSection');
     if (section) { section.style.display = 'block'; }
 }
@@ -318,6 +336,145 @@ function openQR() {
 function closeQR() {
     const section = document.getElementById('qrSection');
     if (section) { section.style.display = 'none'; }
+}
+
+function openPayment() {
+    // Hide other sections
+    closeUsers();
+    closeAddUser();
+    closeSettings();
+    closeQR();
+    closeHome();
+    closeMeeting();
+    closeMeetingManagement();
+    const section = document.getElementById('paymentSection');
+    if (section) { section.style.display = 'block'; }
+}
+
+function closePayment() {
+    const section = document.getElementById('paymentSection');
+    if (section) { section.style.display = 'none'; }
+}
+
+function openHome() {
+    closeUsers();
+    closeAddUser();
+    closeSettings();
+    closeQR();
+    closePayment();
+    closeMeeting();
+    closeMeetingManagement();
+    const section = document.getElementById('homeSection');
+    if (section) { section.style.display = 'block'; }
+}
+
+function closeHome() {
+    const section = document.getElementById('homeSection');
+    if (section) { section.style.display = 'none'; }
+}
+
+function openMeeting() {
+    closeUsers();
+    closeAddUser();
+    closeSettings();
+    closeQR();
+    closePayment();
+    closeHome();
+    const section = document.getElementById('meetingSection');
+    if (section) { section.style.display = 'block'; }
+    // Load existing RSVP from localStorage, if any
+    const rsvpStatus = localStorage.getItem('meeting_rsvp') || 'unknown';
+    updateRSVPStatus(rsvpStatus);
+}
+
+function closeMeeting() {
+    const section = document.getElementById('meetingSection');
+    if (section) { section.style.display = 'none'; }
+}
+
+function setMeetingRSVP(status) {
+    // status: 'attending' | 'not_attending'
+    try {
+        localStorage.setItem('meeting_rsvp', status);
+        updateRSVPStatus(status);
+        showMessage(status === 'attending' ? 'RSVP dihantar: Hadir' : 'RSVP dihantar: Tidak hadir');
+    } catch (_) {
+        updateRSVPStatus(status);
+    }
+}
+
+function updateRSVPStatus(status) {
+    const label = status === 'attending' ? 'Hadir' : status === 'not_attending' ? 'Tidak hadir' : 'Belum dijawab';
+    const el = document.getElementById('rsvpStatus');
+    if (el) { el.textContent = `RSVP: ${label}`; }
+}
+
+function openMeetingManagement() {
+    const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+    if (!currentUser || currentUser.role !== 'admin') {
+        showMessage('Admin access required.', true);
+        return;
+    }
+    closeUsers();
+    closeAddUser();
+    closeSettings();
+    closeQR();
+    closePayment();
+    closeHome();
+    closeMeeting();
+    const section = document.getElementById('meetingMgmtSection');
+    if (section) { section.style.display = 'block'; }
+}
+
+function closeMeetingManagement() {
+    const section = document.getElementById('meetingMgmtSection');
+    if (section) { section.style.display = 'none'; }
+}
+
+// Handle create meeting form
+document.addEventListener('DOMContentLoaded', function() {
+    const mf = document.getElementById('meetingForm');
+    if (mf) {
+        mf.addEventListener('submit', function(e) {
+            e.preventDefault();
+            createMeeting();
+        });
+    }
+});
+
+function createMeeting() {
+    const title = (document.getElementById('mf_title')?.value || '').trim();
+    const datetime = (document.getElementById('mf_datetime')?.value || '').trim();
+    const place = (document.getElementById('mf_place')?.value || '').trim();
+    const agendaText = (document.getElementById('mf_agenda')?.value || '').trim();
+    if (!title || !datetime || !place) { showMessage('Please fill all required fields.', true); return; }
+    // Save to local storage (placeholder for backend)
+    const meeting = { title, datetime, place, agenda: agendaText.split('\n').filter(Boolean) };
+    try { localStorage.setItem('current_meeting', JSON.stringify(meeting)); } catch (_) {}
+    // Reflect in attendance panel
+    const t = document.getElementById('meet_title'); if (t) t.textContent = meeting.title;
+    const dt = document.getElementById('meet_datetime'); if (dt) dt.textContent = meeting.datetime;
+    const pl = document.getElementById('meet_place'); if (pl) pl.textContent = meeting.place;
+    const ag = document.getElementById('meet_agenda');
+    if (ag) {
+        ag.innerHTML = '';
+        meeting.agenda.forEach(item => {
+            const li = document.createElement('li');
+            li.textContent = item;
+            ag.appendChild(li);
+        });
+    }
+    showMessage('Meeting created.');
+    closeMeetingManagement();
+    openMeeting();
+}
+
+function updatePaymentBalance() {
+    const total = parseFloat((document.getElementById('pay_total')?.value || '0')) || 0;
+    const paid = parseFloat((document.getElementById('pay_paid')?.value || '0')) || 0;
+    const balance = Math.max(0, (total - paid));
+    const balEl = document.getElementById('pay_balance');
+    if (balEl) { balEl.value = balance.toFixed(2); }
 }
 
 let currentQRCode;

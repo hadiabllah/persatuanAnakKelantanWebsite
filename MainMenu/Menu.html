@@ -8,8 +8,8 @@
 <body class="page-mainmenu">
     <div class="menu-container">
         <div class="welcome-header">
-            <h1>🏠 Main Menu</h1>
-            <h2>Persatuan Anak Kelantan</h2>
+            <h1>🏠 LAMAN UTAMA</h1>
+            <h2>PORTAL DIGITAL PAKATAN DARULNAIM</h2>
         </div>
         
         <div class="user-info" id="userInfo">
@@ -22,19 +22,22 @@
 
 		<div class="menu-layout">
 			<div class="menu-buttons">
+			<button class="menu-btn" onclick="openHome()">
+				🏡 Home
+			</button>
             <button id="btnAddUser" class="menu-btn" onclick="openAddUser()" style="display:none;">
                 ➕ Add User
             </button>
             <button id="btnMemberMgmt" class="menu-btn" onclick="openUsers()">
                 👥 Member Management
             </button>
-            <button class="menu-btn" onclick="alert('Membership Payment - Coming Soon!')">
+			<button class="menu-btn" onclick="openPayment()">
                 💰 Membership Payment
             </button>
-			<button class="menu-btn" onclick="alert('Meeting Attendance - Coming Soon!')">
+			<button class="menu-btn" onclick="openMeeting()">
 				🗓️ Meeting Attendance
-            </button>
-            <button class="menu-btn" onclick="alert('Meeting Management - Coming Soon!')">
+			</button>
+            <button class="menu-btn" onclick="openMeetingManagement()">
                 🗓️ Meeting Management
             </button>
             <button id="btnQR" class="menu-btn" onclick="openQR()">
@@ -45,6 +48,110 @@
             </button>
 			</div>
 			<div class="menu-panels">
+				<!-- Home Section with News -->
+				<div id="homeSection" style="display:block; margin: 16px 0;">
+					<div style="background:#ffffff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+						<h3 style="margin-top:0;">Berita Terkini</h3>
+						<div class="news-list">
+							<div class="news-card">
+								<h4>Mesyuarat Agung Tahunan</h4>
+								<p>Mesyuarat akan diadakan pada 25 Nov, 8:00 malam di Dewan Utama.</p>
+							</div>
+							<div class="news-card">
+								<h4>Yuran Keahlian 2025</h4>
+								<p>Yuran tahunan kini dibuka. Sila buat pembayaran sebelum 31 Dis.</p>
+							</div>
+							<div class="news-card">
+								<h4>Program Komuniti</h4>
+								<p>Gotong-royong kawasan akan diadakan hujung minggu ini. Semua dijemput hadir.</p>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Meeting Attendance Section -->
+				<div id="meetingSection" style="display:none; margin: 16px 0;">
+					<div style="background:#ffffff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+						<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+							<h3 style="margin:0;">Upcoming Meeting</h3>
+							<button type="button" class="logout-btn" onclick="closeMeeting()">Close</button>
+						</div>
+						<div style="display:grid; grid-template-columns:1fr; gap:8px;">
+							<div><strong>Title:</strong> <span id="meet_title">Mesyuarat Bulanan Persatuan</span></div>
+							<div><strong>Tanggal & Masa:</strong> <span id="meet_datetime">15 Dis 2025, 8:00 malam</span></div>
+							<div><strong>Tempat:</strong> <span id="meet_place">Dewan Serbaguna, Kota Bharu</span></div>
+							<div>
+								<strong>Agenda:</strong>
+								<ol id="meet_agenda" style="margin:6px 0 0 18px;">
+									<li>Laporan kewangan</li>
+									<li>Kemas kini program komuniti</li>
+									<li>Lain-lain hal</li>
+								</ol>
+							</div>
+							<div id="rsvpStatus" style="margin-top:8px; font-size:14px; color:#555;">RSVP: Belum dijawab</div>
+							<div style="display:flex; gap:8px; margin-top:8px;">
+								<button class="menu-btn" onclick="setMeetingRSVP('attending')">Saya Hadir</button>
+								<button class="logout-btn" onclick="setMeetingRSVP('not_attending')">Tidak Hadir</button>
+							</div>
+						</div>
+					</div>
+
+				<!-- Meeting Management (Create Meeting) Section -->
+				<div id="meetingMgmtSection" style="display:none; margin: 16px 0;">
+					<div style="background:#ffffff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+						<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+							<h3 style="margin:0;">Create Meeting</h3>
+							<button type="button" class="logout-btn" onclick="closeMeetingManagement()">Close</button>
+						</div>
+						<form id="meetingForm">
+							<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+								<div>
+									<label for="mf_title">Title</label>
+									<input id="mf_title" name="title" type="text" required style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
+								</div>
+								<div>
+									<label for="mf_datetime">Date & Time</label>
+									<input id="mf_datetime" name="datetime" type="datetime-local" required style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
+								</div>
+								<div style="grid-column:1 / -1;">
+									<label for="mf_place">Place</label>
+									<input id="mf_place" name="place" type="text" required style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
+								</div>
+								<div style="grid-column:1 / -1;">
+									<label for="mf_agenda">Agenda (one item per line)</label>
+									<textarea id="mf_agenda" name="agenda" rows="4" style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;"></textarea>
+								</div>
+							</div>
+							<div style="margin-top:16px; display:flex; gap:8px;">
+								<button type="submit" class="menu-btn">Create</button>
+								<button type="button" class="logout-btn" onclick="closeMeetingManagement()">Cancel</button>
+							</div>
+						</form>
+					</div>
+				</div>
+				<!-- Yuran Keahlian (Membership Payment) Section -->
+				<div id="paymentSection" style="display:none; margin: 16px 0;">
+					<div style="background:#ffffff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+						<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+							<h3 style="margin:0;">Yuran Keahlian</h3>
+							<button type="button" class="logout-btn" onclick="closePayment()">Close</button>
+						</div>
+						<div class="payment-grid">
+							<div class="field-row">
+								<label for="pay_total">Jumlah Perlu Dibayar (RM)</label>
+								<input id="pay_total" type="number" step="0.01" value="0.00" oninput="updatePaymentBalance()">
+							</div>
+							<div class="field-row">
+								<label for="pay_paid">Sudah Dibayar (RM)</label>
+								<input id="pay_paid" type="number" step="0.01" value="0.00" oninput="updatePaymentBalance()">
+							</div>
+							<div class="field-row">
+								<label for="pay_balance">Baki Pembayaran (RM)</label>
+								<input id="pay_balance" type="number" step="0.01" value="0.00" readonly>
+							</div>
+						</div>
+					</div>
+				</div>
 
 		<!-- Inline feature sections inside the main container -->
 		<!-- QR Generator Section -->
@@ -170,8 +277,6 @@
         </button>
     </div>
 
-<<<<<<< HEAD
-=======
     <!-- QR Generator Section -->
     <div id="qrSection" style="display:none; max-width:800px; margin: 16px auto;">
         <div style="background:#ffffff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
@@ -291,7 +396,6 @@
         </div>
     </div>
 
->>>>>>> 849d973d61d18db4df65d39c66cfc2e6df99be40
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="menu.js"></script>
 
