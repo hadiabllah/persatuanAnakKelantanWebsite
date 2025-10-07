@@ -143,3 +143,9 @@ body {
 .logout-btn:hover {
     background: #c82333;
 }
+
+/* Users table: keep Occupation on one line */
+#usersSection table th:nth-child(6),
+#usersSection table td:nth-child(6) {
+    white-space: nowrap;
+}

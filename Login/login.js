@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     // Redirect by role
                     setTimeout(() => {
-                        if (data.user.role === 'admin') {
+                        if (data.user.role === 'Pentadbir') {
                             window.location.href = '../MainMenu/Menu.html';
                         } else {
                             window.location.href = '../MainMenu/Menu.html';
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                if (data.user.role === 'admin') {
+                if (data.user.role === 'Pentadbir') {
                     window.location.href = '../MainMenu/Menu.html';
                 } else {
                     window.location.href = '../MainMenu/Menu.html';

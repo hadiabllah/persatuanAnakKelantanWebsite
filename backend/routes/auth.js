@@ -30,7 +30,8 @@ const authenticate = async (req, res, next) => {
 };
 
 const requireAdmin = (req, res, next) => {
-  if (req.user?.role !== 'admin') {
+  const role = req.user?.role;
+  if (!(role === 'Pentadbir' || role === 'admin')) {
     return res.status(403).json({ success: false, message: 'Admin access required' });
   }
   next();
@@ -86,6 +87,8 @@ router.post('/login', async (req, res) => {
         username: user.username,
         email: user.email,
         fullName: user.fullName,
+        icNumber: user.icNumber,
+        occupation: user.occupation,
         role: user.role
       }
     });
@@ -103,7 +106,7 @@ router.post('/login', async (req, res) => {
 // Public self-registration (if you want to keep it). For admin-only creation, use /create below.
 router.post('/register', async (req, res) => {
   try {
-    const { username, email, password, fullName, icNumber } = req.body;
+    const { username, email, password, fullName, icNumber, occupation } = req.body;
 
     // Validate input
     if (!username || !email || !password || !fullName) {
@@ -126,12 +129,28 @@ router.post('/register', async (req, res) => {
     }
 
     // Create new user
+    const allowedOccupations = [
+      'Keselamatan',
+      'Perkhidmatan & Hospitaliti',
+      'Pertanian & Alam Sekitar',
+      'Undang-Undang & Pendtadbiran',
+      'Seni & Kreatif',
+      'Perniagaan & Kewangan',
+      'Pendidikan & Latihan',
+      'Sains & Kesihatan',
+      'Teknologi Maklumat',
+      'Teknikal & Kejuruteraan'
+    ];
+    const occCandidate = (occupation || '').toString();
+    const occupationToSet = allowedOccupations.includes(occCandidate) ? occCandidate : undefined;
+
     const user = new User({
       username,
       email,
       password,
       fullName,
-      icNumber
+      icNumber,
+      ...(occupationToSet ? { occupation: occupationToSet } : {})
     });
 
     await user.save();
@@ -149,6 +168,7 @@ router.post('/register', async (req, res) => {
         email: user.email,
         fullName: user.fullName,
         icNumber: user.icNumber,
+        occupation: user.occupation,
         role: user.role
       }
     });
@@ -165,7 +185,7 @@ router.post('/register', async (req, res) => {
 // Admin-only: create user
 router.post('/create', authenticate, requireAdmin, async (req, res) => {
   try {
-    const { username, email, password, fullName, icNumber, role } = req.body;
+    const { username, email, password, fullName, icNumber, occupation, role } = req.body;
 
     if (!username || !email || !password || !fullName) {
       return res.status(400).json({ success: false, message: 'All fields are required' });
@@ -177,13 +197,29 @@ router.post('/create', authenticate, requireAdmin, async (req, res) => {
     }
 
     // validate role
-    const allowedRoles = ['admin', 'secretary', 'treasurer', 'user'];
-    const roleToSet = allowedRoles.includes((role || '').toLowerCase()) ? role.toLowerCase() : 'user';
+    const allowedRoles = ['Pentadbir', 'Setiausaha', 'Bendahari', 'Ahli'];
+    const roleCandidate = (role || '').toString();
+    const roleToSet = allowedRoles.includes(roleCandidate) ? roleCandidate : 'Ahli';
 
-    const user = new User({ username, email, password, fullName, icNumber, role: roleToSet });
+    const allowedOccupations = [
+      'Keselamatan',
+      'Perkhidmatan & Hospitaliti',
+      'Pertanian & Alam Sekitar',
+      'Undang-Undang & Pendtadbiran',
+      'Seni & Kreatif',
+      'Perniagaan & Kewangan',
+      'Pendidikan & Latihan',
+      'Sains & Kesihatan',
+      'Teknologi Maklumat',
+      'Teknikal & Kejuruteraan'
+    ];
+    const occCandidate = (occupation || '').toString();
+    const occupationToSet = allowedOccupations.includes(occCandidate) ? occCandidate : undefined;
+
+    const user = new User({ username, email, password, fullName, icNumber, role: roleToSet, ...(occupationToSet ? { occupation: occupationToSet } : {}) });
     await user.save();
 
-    res.status(201).json({ success: true, message: 'User created', user: { id: user._id, username: user.username, email: user.email, fullName: user.fullName, icNumber: user.icNumber, role: user.role } });
+    res.status(201).json({ success: true, message: 'User created', user: { id: user._id, username: user.username, email: user.email, fullName: user.fullName, icNumber: user.icNumber, occupation: user.occupation, role: user.role } });
   } catch (error) {
     console.error('Admin create user error:', error);
     res.status(500).json({ success: false, message: 'Server error during user creation' });
@@ -274,7 +310,7 @@ router.put('/me', authenticate, async (req, res) => {
 // Admin-only: list users
 router.get('/users', authenticate, requireAdmin, async (req, res) => {
   try {
-    const users = await User.find({}, 'username email fullName icNumber role createdAt').sort({ createdAt: -1 });
+    const users = await User.find({}, 'username email fullName icNumber occupation role createdAt').sort({ createdAt: -1 });
     res.json({
       success: true,
       users

@@ -74,7 +74,7 @@ async function verifyToken() {
             loadUserInfo();
 
             // Show Add User button for admin only
-            const isAdmin = data.user.role === 'admin';
+            const isAdmin = data.user.role === 'Pentadbir' || data.user.role === 'admin';
             const btn = document.getElementById('btnAddUser');
             if (btn) { btn.style.display = isAdmin ? 'inline-block' : 'none'; }
             const btnMember = document.getElementById('btnMemberMgmt');
@@ -109,9 +109,16 @@ document.addEventListener('DOMContentLoaded', function() {
     // default QR URL
     const qrUrl = document.getElementById('qr_url');
     if (qrUrl && !qrUrl.value) { qrUrl.value = 'http://localhost:3000/signup'; }
+
+    // filters
+    const roleSel = document.getElementById('filter_role');
+    const occSel = document.getElementById('filter_occupation');
+    if (roleSel) roleSel.addEventListener('change', applyFiltersAndRender);
+    if (occSel) occSel.addEventListener('change', applyFiltersAndRender);
 });
 
 // Fetch and render users
+let allUsers = [];
 async function fetchUsers() {
     try {
         const token = localStorage.getItem('token');
@@ -126,7 +133,8 @@ async function fetchUsers() {
             showMessage(message, true);
             return;
         }
-        renderUsers(data.users || []);
+        allUsers = data.users || [];
+        applyFiltersAndRender();
     } catch (error) {
         console.error('Fetch users error:', error);
         showMessage('Error fetching users. Please try again.', true);
@@ -140,7 +148,7 @@ function renderUsers(users) {
     if (!users.length) {
         const tr = document.createElement('tr');
         const td = document.createElement('td');
-        td.colSpan = 7; // #, Username, Full Name, Email, IC Number, Role, Actions
+        td.colSpan = 8; // #, Username, Full Name, Email, IC Number, Occupation, Role, Actions
         td.style.padding = '12px';
         td.textContent = 'No users found';
         tr.appendChild(td);
@@ -156,6 +164,7 @@ function renderUsers(users) {
             u.fullName || '-',
             u.email || '-',
             u.icNumber || '-',
+            u.occupation || '-',
             u.role || '-'
         ];
         cells.forEach(val => {
@@ -180,9 +189,32 @@ function renderUsers(users) {
     });
 }
 
+function applyFiltersAndRender() {
+    const roleSel = document.getElementById('filter_role');
+    const occSel = document.getElementById('filter_occupation');
+    const role = roleSel ? roleSel.value : '';
+    const occ = occSel ? occSel.value : '';
+    let filtered = allUsers.slice();
+    if (role) {
+        filtered = filtered.filter(u => (u.role || '') === role);
+    }
+    if (occ) {
+        filtered = filtered.filter(u => (u.occupation || '') === occ);
+    }
+    renderUsers(filtered);
+}
+
+function resetFilters() {
+    const roleSel = document.getElementById('filter_role');
+    const occSel = document.getElementById('filter_occupation');
+    if (roleSel) roleSel.value = '';
+    if (occSel) occSel.value = '';
+    applyFiltersAndRender();
+}
+
 function openUsers() {
     const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-    if (!currentUser || currentUser.role !== 'admin') {
+    if (!currentUser || (currentUser.role !== 'Pentadbir' && currentUser.role !== 'admin')) {
         showMessage('Admin access required.', true);
         return;
     }
@@ -239,7 +271,8 @@ async function addUser() {
             icNumber: formData.get('icNumber'),
             fullName: formData.get('fullName'),
             password: formData.get('password'),
-            role: (formData.get('role') || 'user').toLowerCase()
+            role: (formData.get('role') || 'Ahli'),
+            occupation: (formData.get('occupation') || '')
         };
 
         const token = localStorage.getItem('token');
