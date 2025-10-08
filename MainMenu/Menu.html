@@ -47,7 +47,7 @@
                 🗓️ Pengurusan Mesyuarat
             </button>
             <button id="btnQR" class="menu-btn" onclick="openQR()">
-                🧾 Generator QR (Sign Up)
+                🧾 Menjana QR (Daftar Ahli)
             </button>
             <button class="menu-btn" onclick="openSettings()">
                 ⚙️ Tetapan
@@ -80,7 +80,7 @@
 					<div style="background:#ffffff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
 						<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
 							<h3 style="margin:0;">Upcoming Meeting</h3>
-							<button type="button" class="logout-btn" onclick="closeMeeting()">Close</button>
+							<button type="button" class="logout-btn" onclick="closeMeeting()">Tutup</button>
 						</div>
 						<div style="display:grid; grid-template-columns:1fr; gap:8px;">
 							<div><strong>Title:</strong> <span id="meet_title">Mesyuarat Bulanan Persatuan</span></div>
@@ -103,45 +103,89 @@
 					</div>
 				</div>
                 
+				<!-- Delete Confirmation Modal -->
+				<div id="deleteConfirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;">
+					<div style="background:white; padding:24px; border-radius:8px; box-shadow:0 4px 20px rgba(0,0,0,0.3); max-width:400px; width:90%; text-align:center;">
+						<h3 style="margin:0 0 16px 0; color:#333;">Padam Mesyuarat</h3>
+						<p style="margin:0 0 20px 0; color:#666;">Adakah anda pasti mahu memadam mesyuarat ini?</p>
+						<div style="display:flex; gap:12px; justify-content:center;">
+							<button id="confirmDeleteBtn" style="background:#dc3545; color:white; border:none; padding:10px 20px; border-radius:4px; cursor:pointer; font-size:14px;">Ya</button>
+							<button id="cancelDeleteBtn" style="background:#6c757d; color:white; border:none; padding:10px 20px; border-radius:4px; cursor:pointer; font-size:14px;">Batal</button>
+						</div>
+					</div>
+				</div>
+
 				<!-- Meeting Management (Create Meeting) Section -->
 				<div id="meetingMgmtSection" style="display:none; margin: 16px 0;">
 					<div style="background:#ffffff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
 						<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-							<h3 style="margin:0;">Tambah Mesyuarat</h3>
-							<button type="button" class="logout-btn" onclick="closeMeetingManagement()">Close</button>
+							<h3 style="margin:0;">Pengurusan Mesyuarat</h3>
+							<button type="button" class="logout-btn" onclick="closeMeetingManagement()">Tutup</button>
 						</div>
-						<form id="meetingForm">
-							<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-								<div>
-									<label for="mf_title">Title</label>
-									<input id="mf_title" name="title" type="text" required style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
-								</div>
-								<div>
-									<label for="mf_datetime">Date & Time</label>
-									<input id="mf_datetime" name="datetime" type="datetime-local" required style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
-								</div>
-								<div style="grid-column:1 / -1;">
-									<label for="mf_place">Place</label>
-									<input id="mf_place" name="place" type="text" required style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
-								</div>
-								<div style="grid-column:1 / -1;">
-									<label for="mf_agenda">Agenda (one item per line)</label>
-									<textarea id="mf_agenda" name="agenda" rows="4" style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;"></textarea>
-								</div>
+						
+						<!-- Meeting List -->
+						<div style="margin-bottom:20px;">
+							<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+								<h4 style="margin:0;">Senarai Mesyuarat</h4>
+								<button type="button" class="menu-btn" onclick="toggleMeetingForm()" id="toggleFormBtn">Tambah Mesyuarat</button>
 							</div>
-							<div style="margin-top:16px; display:flex; gap:8px;">
-								<button type="submit" class="menu-btn">Create</button>
-								<button type="button" class="logout-btn" onclick="closeMeetingManagement()">Cancel</button>
+							<div style="overflow-x:auto; background:#f8f9fa; border-radius:6px; border:1px solid #e9ecef;">
+								<table style="width:100%; border-collapse:collapse; background:#ffffff;">
+									<thead>
+										<tr style="background:#e9ecef; text-align:left; border-bottom:2px solid #dee2e6;">
+											<th style="padding:12px 8px; font-weight:600; color:#495057;">Tajuk</th>
+											<th style="padding:12px 8px; font-weight:600; color:#495057;">Tarikh & Masa</th>
+											<th style="padding:12px 8px; font-weight:600; color:#495057;">Tempat</th>
+											<th style="padding:12px 8px; font-weight:600; color:#495057;">Status</th>
+											<th style="padding:12px 8px; font-weight:600; color:#495057;">Tindakan</th>
+										</tr>
+									</thead>
+									<tbody id="meetingsTableBody">
+										<tr>
+											<td colspan="5" style="padding:20px; text-align:center; color:#666;">Memuatkan mesyuarat...</td>
+										</tr>
+									</tbody>
+								</table>
 							</div>
-						</form>
+						</div>
+
+						<!-- Create Meeting Form (Hidden by default) -->
+						<div id="meetingFormContainer" style="display:none;">
+							<h4 style="margin:0 0 12px 0;">Tambah Mesyuarat Baharu</h4>
+							<form id="meetingForm">
+								<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+									<div>
+										<label for="mf_title">Tajuk</label>
+										<input id="mf_title" name="title" type="text" required style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
+									</div>
+									<div>
+										<label for="mf_datetime">Tarikh & Masa</label>
+										<input id="mf_datetime" name="datetime" type="datetime-local" required style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
+									</div>
+									<div style="grid-column:1 / -1;">
+										<label for="mf_place">Tempat</label>
+										<input id="mf_place" name="place" type="text" required style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
+									</div>
+									<div style="grid-column:1 / -1;">
+										<label for="mf_agenda">Agenda (satu item setiap baris)</label>
+										<textarea id="mf_agenda" name="agenda" rows="4" style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;"></textarea>
+									</div>
+								</div>
+								<div style="margin-top:16px; display:flex; gap:8px;">
+									<button type="submit" class="menu-btn">Cipta Mesyuarat</button>
+									<button type="button" class="logout-btn" onclick="toggleMeetingForm()">Batal</button>
+								</div>
+							</form>
+						</div>
 					</div>
 				</div>
+
 				<!-- Yuran Keahlian (Membership Payment) Section -->
 				<div id="paymentSection" style="display:none; margin: 16px 0;">
 					<div style="background:#ffffff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
 						<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
 							<h3 style="margin:0;">Yuran Keahlian</h3>
-							<button type="button" class="logout-btn" onclick="closePayment()">Close</button>
+							<button type="button" class="logout-btn" onclick="closePayment()">Tutup</button>
 						</div>
 						<div class="payment-grid">
 							<div class="field-row">
@@ -164,8 +208,8 @@
         <div id="qrSection" style="display:none; max-width:800px; margin: 16px auto;">
             <div style="background:#ffffff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                    <h3 style="margin:0;">QR Generator (Sign Up)</h3>
-                    <button type="button" class="logout-btn" onclick="closeQR()">Close</button>
+                    <h3 style="margin:0;">Menjana QR (Daftar Ahli)</h3>
+                    <button type="button" class="logout-btn" onclick="closeQR()">Tutup</button>
                 </div>
                 <div style="display:grid; grid-template-columns:2fr 1fr; gap:12px; align-items:end;">
                     <div>
@@ -173,7 +217,7 @@
                         <input id="qr_url" type="text" value="http://localhost:3000/signup" style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
                     </div>
                     <div>
-                        <button class="menu-btn" onclick="generateQR()">Generate</button>
+                        <button class="menu-btn" onclick="generateQR()">Jana</button>
                     </div>
                 </div>
                 <div id="qrContainer" style="margin-top:16px; display:flex; flex-direction:column; align-items:center; gap:8px;">
@@ -308,7 +352,7 @@
             <div style="background:#ffffff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
                     <h3 style="margin:0;">Tetapan</h3>
-                    <button type="button" class="logout-btn" onclick="closeSettings()">Close</button>
+                    <button type="button" class="logout-btn" onclick="closeSettings()">Tutup</button>
                 </div>
                     <form id="settingsForm">
                         <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">

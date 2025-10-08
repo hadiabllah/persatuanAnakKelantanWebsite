@@ -138,6 +138,12 @@ document.addEventListener('DOMContentLoaded', function() {
     if (roleText) roleText.addEventListener('input', applyFiltersAndRender);
     if (occText) occText.addEventListener('input', applyFiltersAndRender);
     
+    // Wire up delete confirmation modal
+    const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+    const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+    if (confirmDeleteBtn) confirmDeleteBtn.addEventListener('click', confirmDeleteMeeting);
+    if (cancelDeleteBtn) cancelDeleteBtn.addEventListener('click', hideDeleteConfirmation);
+    
     // default QR URL
     const qrUrl = document.getElementById('qr_url');
     if (qrUrl && !qrUrl.value) { qrUrl.value = 'http://localhost:3000/signup'; }
@@ -446,7 +452,7 @@ function closeHome() {
     if (section) { section.style.display = 'none'; }
 }
 
-function openMeeting() {
+async function openMeeting() {
     closeUsers();
     closeAddUser();
     closeSettings();
@@ -456,9 +462,55 @@ function openMeeting() {
     closeMeetingManagement();
     const section = document.getElementById('meetingSection');
     if (section) { section.style.display = 'block'; }
+    
+    // Load upcoming meeting from database
+    await loadUpcomingMeeting();
+    
     // Load existing RSVP from localStorage, if any
     const rsvpStatus = localStorage.getItem('meeting_rsvp') || 'unknown';
     updateRSVPStatus(rsvpStatus);
+}
+
+async function loadUpcomingMeeting() {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_BASE}/meetings/upcoming`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok && data.success && data.meetings.length > 0) {
+            const meeting = data.meetings[0]; // Get the next upcoming meeting
+            
+            // Update the meeting display
+            const titleEl = document.getElementById('meet_title');
+            const datetimeEl = document.getElementById('meet_datetime');
+            const placeEl = document.getElementById('meet_place');
+            const agendaEl = document.getElementById('meet_agenda');
+            
+            if (titleEl) titleEl.textContent = meeting.title;
+            if (datetimeEl) datetimeEl.textContent = new Date(meeting.datetime).toLocaleString('en-MY');
+            if (placeEl) placeEl.textContent = meeting.place;
+            
+            if (agendaEl && meeting.agenda) {
+                agendaEl.innerHTML = '';
+                meeting.agenda.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = item;
+                    agendaEl.appendChild(li);
+                });
+            }
+            
+            // Store meeting ID for RSVP
+            localStorage.setItem('current_meeting_id', meeting._id);
+        }
+    } catch (error) {
+        console.error('Load upcoming meeting error:', error);
+        // Fallback to default meeting info
+    }
 }
 
 function closeMeeting() {
@@ -466,14 +518,38 @@ function closeMeeting() {
     if (section) { section.style.display = 'none'; }
 }
 
-function setMeetingRSVP(status) {
+async function setMeetingRSVP(status) {
     // status: 'attending' | 'not_attending'
     try {
-        localStorage.setItem('meeting_rsvp', status);
-        updateRSVPStatus(status);
-        showMessage(status === 'attending' ? 'RSVP dihantar: Hadir' : 'RSVP dihantar: Tidak hadir');
-    } catch (_) {
-        updateRSVPStatus(status);
+        const meetingId = localStorage.getItem('current_meeting_id');
+        if (!meetingId) {
+            showMessage('No meeting found to RSVP to.', true);
+            return;
+        }
+
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_BASE}/meetings/${meetingId}/rsvp`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ status })
+        });
+
+        const data = await response.json();
+        
+        if (response.ok && data.success) {
+            localStorage.setItem('meeting_rsvp', status);
+            updateRSVPStatus(status);
+            showMessage(data.message);
+        } else {
+            const message = data && data.message ? data.message : 'Failed to update RSVP';
+            showMessage(message, true);
+        }
+    } catch (error) {
+        console.error('RSVP error:', error);
+        showMessage('Error updating RSVP. Please try again.', true);
     }
 }
 
@@ -493,6 +569,170 @@ function openMeetingManagement() {
     closeMeeting();
     const section = document.getElementById('meetingMgmtSection');
     if (section) { section.style.display = 'block'; }
+    
+    // Load meetings list
+    loadMeetingsList();
+}
+
+function toggleMeetingForm() {
+    const formContainer = document.getElementById('meetingFormContainer');
+    const toggleBtn = document.getElementById('toggleFormBtn');
+    
+    if (formContainer.style.display === 'none') {
+        formContainer.style.display = 'block';
+        toggleBtn.textContent = 'Tutup Form';
+    } else {
+        formContainer.style.display = 'none';
+        toggleBtn.textContent = 'Tambah Mesyuarat';
+        // Reset form
+        document.getElementById('meetingForm').reset();
+    }
+}
+
+async function loadMeetingsList() {
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            console.error('No authentication token found');
+            const tbody = document.getElementById('meetingsTableBody');
+            tbody.innerHTML = '<tr><td colspan="5" style="padding:20px; text-align:center; color:#dc3545;">Sila log masuk semula</td></tr>';
+            return;
+        }
+
+        console.log('Loading meetings from:', `${API_BASE}/meetings/`);
+        const response = await fetch(`${API_BASE}/meetings/`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        console.log('Response status:', response.status);
+        const data = await response.json();
+        console.log('Response data:', data);
+        
+        const tbody = document.getElementById('meetingsTableBody');
+        
+        if (!response.ok || !data.success) {
+            const errorMsg = data.message || 'Ralat memuatkan mesyuarat';
+            console.error('API Error:', errorMsg);
+            tbody.innerHTML = `<tr><td colspan="5" style="padding:20px; text-align:center; color:#dc3545;">${errorMsg}</td></tr>`;
+            return;
+        }
+        
+        if (!data.meetings || data.meetings.length === 0) {
+            console.log('No meetings found in database');
+            tbody.innerHTML = '<tr><td colspan="5" style="padding:20px; text-align:center; color:#666;">Tiada mesyuarat dijumpai</td></tr>';
+            return;
+        }
+        
+        console.log(`Found ${data.meetings.length} meetings`);
+        tbody.innerHTML = '';
+        data.meetings.forEach((meeting, index) => {
+            const tr = document.createElement('tr');
+            tr.style.borderBottom = '1px solid #e9ecef';
+            
+            const statusBadge = getStatusBadge(meeting.status);
+            const actions = getMeetingActions(meeting);
+            
+            tr.innerHTML = `
+                <td style="padding:12px 8px;">${meeting.title}</td>
+                <td style="padding:12px 8px;">${new Date(meeting.datetime).toLocaleString('en-MY')}</td>
+                <td style="padding:12px 8px;">${meeting.place}</td>
+                <td style="padding:12px 8px;">${statusBadge}</td>
+                <td style="padding:12px 8px;">${actions}</td>
+            `;
+            
+            tbody.appendChild(tr);
+        });
+        
+    } catch (error) {
+        console.error('Load meetings error:', error);
+        const tbody = document.getElementById('meetingsTableBody');
+        tbody.innerHTML = '<tr><td colspan="5" style="padding:20px; text-align:center; color:#dc3545;">Ralat memuatkan mesyuarat</td></tr>';
+    }
+}
+
+function getStatusBadge(status) {
+    const badges = {
+        'upcoming': '<span style="background:#28a745; color:white; padding:4px 8px; border-radius:4px; font-size:12px;">Akan Datang</span>',
+        'ongoing': '<span style="background:#ffc107; color:black; padding:4px 8px; border-radius:4px; font-size:12px;">Sedang Berlangsung</span>',
+        'completed': '<span style="background:#6c757d; color:white; padding:4px 8px; border-radius:4px; font-size:12px;">Selesai</span>',
+        'cancelled': '<span style="background:#dc3545; color:white; padding:4px 8px; border-radius:4px; font-size:12px;">Dibatalkan</span>'
+    };
+    return badges[status] || '<span style="background:#6c757d; color:white; padding:4px 8px; border-radius:4px; font-size:12px;">Tidak Diketahui</span>';
+}
+
+function getMeetingActions(meeting) {
+    const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+    
+    // Handle both populated and non-populated createdBy field
+    let creatorId = null;
+    if (meeting.createdBy) {
+        creatorId = typeof meeting.createdBy === 'object' ? meeting.createdBy._id : meeting.createdBy;
+    }
+    
+    const isCreator = creatorId && creatorId === currentUser.id;
+    const isAdmin = currentUser.role === 'Pentadbir';
+    
+    let actions = '';
+    
+    if (isCreator || isAdmin) {
+        actions += `<button onclick="editMeeting('${meeting._id}')" style="background:#007bff; color:white; border:none; padding:4px 8px; border-radius:4px; margin-right:4px; cursor:pointer; font-size:12px;">Edit</button>`;
+        actions += `<button onclick="deleteMeeting('${meeting._id}')" style="background:#dc3545; color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-size:12px;">Padam</button>`;
+    }
+    
+    return actions || '<span style="color:#666; font-size:12px;">Tiada tindakan</span>';
+}
+
+let pendingDeleteId = null;
+
+function showDeleteConfirmation(meetingId) {
+    pendingDeleteId = meetingId;
+    const modal = document.getElementById('deleteConfirmModal');
+    modal.style.display = 'flex';
+}
+
+function hideDeleteConfirmation() {
+    const modal = document.getElementById('deleteConfirmModal');
+    modal.style.display = 'none';
+    pendingDeleteId = null;
+}
+
+async function confirmDeleteMeeting() {
+    if (!pendingDeleteId) return;
+    
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_BASE}/meetings/${pendingDeleteId}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok && data.success) {
+            loadMeetingsList(); // Reload the list
+        } else {
+            const message = data && data.message ? data.message : 'Gagal memadam mesyuarat';
+            showMessage(message, true);
+        }
+    } catch (error) {
+        console.error('Delete meeting error:', error);
+        showMessage('Ralat memadam mesyuarat. Sila cuba lagi.', true);
+    } finally {
+        hideDeleteConfirmation();
+    }
+}
+
+async function deleteMeeting(meetingId) {
+    showDeleteConfirmation(meetingId);
+}
+
+function editMeeting(meetingId) {
+    // For now, just show a message. You can implement edit functionality later
+    showMessage('Fungsi edit akan ditambah kemudian.', true);
 }
 
 function closeMeetingManagement() {
@@ -511,31 +751,54 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-function createMeeting() {
+async function createMeeting() {
     const title = (document.getElementById('mf_title')?.value || '').trim();
     const datetime = (document.getElementById('mf_datetime')?.value || '').trim();
     const place = (document.getElementById('mf_place')?.value || '').trim();
     const agendaText = (document.getElementById('mf_agenda')?.value || '').trim();
-    if (!title || !datetime || !place) { showMessage('Please fill all required fields.', true); return; }
-    // Save to local storage (placeholder for backend)
-    const meeting = { title, datetime, place, agenda: agendaText.split('\n').filter(Boolean) };
-    try { localStorage.setItem('current_meeting', JSON.stringify(meeting)); } catch (_) {}
-    // Reflect in attendance panel
-    const t = document.getElementById('meet_title'); if (t) t.textContent = meeting.title;
-    const dt = document.getElementById('meet_datetime'); if (dt) dt.textContent = meeting.datetime;
-    const pl = document.getElementById('meet_place'); if (pl) pl.textContent = meeting.place;
-    const ag = document.getElementById('meet_agenda');
-    if (ag) {
-        ag.innerHTML = '';
-        meeting.agenda.forEach(item => {
-            const li = document.createElement('li');
-            li.textContent = item;
-            ag.appendChild(li);
-        });
+    
+    if (!title || !datetime || !place) { 
+        showMessage('Please fill all required fields.', true); 
+        return; 
     }
-    showMessage('Meeting created.');
-    closeMeetingManagement();
-    openMeeting();
+
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_BASE}/meetings/create`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                title,
+                datetime,
+                place,
+                agenda: agendaText
+            })
+        });
+
+        const data = await response.json();
+        
+        if (!response.ok || !data.success) {
+            const message = data && data.message ? data.message : 'Failed to create meeting';
+            showMessage(message, true);
+            return;
+        }
+
+        showMessage('Meeting created successfully.');
+        
+        // Reset form and hide it
+        document.getElementById('meetingForm').reset();
+        toggleMeetingForm();
+        
+        // Reload meetings list
+        loadMeetingsList();
+        
+    } catch (error) {
+        console.error('Create meeting error:', error);
+        showMessage('Error creating meeting. Please try again.', true);
+    }
 }
 
 function updatePaymentBalance() {

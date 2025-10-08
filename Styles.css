@@ -144,6 +144,18 @@ body.page-mainmenu {
     border: 1px solid #dee2e6;
 }
 
+/* Delete Confirmation Modal */
+#deleteConfirmModal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#deleteConfirmModal > div {
+    position: relative;
+    margin: auto;
+}
+
 /* News styles */
 .news-list {
     display: grid;
