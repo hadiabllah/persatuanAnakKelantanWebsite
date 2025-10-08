@@ -31,6 +31,11 @@ function loadUserInfo() {
         document.getElementById('userName').textContent = user.fullName || user.username;
         document.getElementById('userRole').textContent = user.role || 'Member';
         document.getElementById('userEmail').textContent = user.email || 'No email';
+        const avatarEl = document.getElementById('userAvatar');
+        if (avatarEl) {
+            const src = user.avatarUrl || user.photoUrl || '';
+            if (src) { avatarEl.src = src; }
+        }
     } else {
         // If no user data, redirect to login
         showMessage('No user data found. Redirecting to login...', true);
@@ -106,6 +111,33 @@ document.addEventListener('DOMContentLoaded', function() {
             updateProfile();
         });
     }
+    // avatar preview
+    const avatarInput = document.getElementById('set_avatar');
+    if (avatarInput) {
+        avatarInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewImg = document.getElementById('previewImg');
+                    previewImg.src = e.target.result;
+                    previewImg.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+    
+    // Wire up Users filters
+    const roleSel = document.getElementById('filter_role');
+    const occSel = document.getElementById('filter_occupation');
+    const roleText = document.getElementById('filter_role_text');
+    const occText = document.getElementById('filter_occupation_text');
+    if (roleSel) roleSel.addEventListener('change', applyFiltersAndRender);
+    if (occSel) occSel.addEventListener('change', applyFiltersAndRender);
+    if (roleText) roleText.addEventListener('input', applyFiltersAndRender);
+    if (occText) occText.addEventListener('input', applyFiltersAndRender);
+    
     // default QR URL
     const qrUrl = document.getElementById('qr_url');
     if (qrUrl && !qrUrl.value) { qrUrl.value = 'http://localhost:3000/signup'; }
@@ -421,6 +453,7 @@ function openMeeting() {
     closeQR();
     closePayment();
     closeHome();
+    closeMeetingManagement();
     const section = document.getElementById('meetingSection');
     if (section) { section.style.display = 'block'; }
     // Load existing RSVP from localStorage, if any
@@ -451,11 +484,6 @@ function updateRSVPStatus(status) {
 }
 
 function openMeetingManagement() {
-    const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
-    if (!currentUser || (currentUser.role !== 'Pentadbir' && currentUser.role !== 'admin')) {
-        showMessage('Admin access required.', true);
-        return;
-    }
     closeUsers();
     closeAddUser();
     closeSettings();
@@ -568,13 +596,30 @@ async function updateProfile() {
         const formData = new FormData(form);
         const fullName = (formData.get('fullName') || '').toString().trim();
         const password = (formData.get('password') || '').toString();
+        const avatarFile = formData.get('avatar');
+        
         const payload = {};
         if (fullName.length > 0) { payload.fullName = fullName; }
         if (password.length > 0) { payload.password = password; }
-        if (!payload.fullName && !payload.password) {
+        
+        // Handle avatar upload
+        if (avatarFile && avatarFile.size > 0) {
+            // Convert file to base64
+            const avatarUrl = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = () => reject(reader.error);
+                reader.readAsDataURL(avatarFile);
+            });
+            
+            payload.avatarUrl = avatarUrl;
+        }
+        
+        if (!payload.fullName && !payload.password && !payload.avatarUrl) {
             showMessage('Nothing to update.', true);
             return;
         }
+        
         const token = localStorage.getItem('token');
         const response = await fetch(`${API_BASE}/auth/me`, {
             method: 'PUT',
@@ -584,17 +629,20 @@ async function updateProfile() {
             },
             body: JSON.stringify(payload)
         });
+        
         const data = await response.json();
         if (!response.ok || !data.success) {
             const message = data && data.message ? data.message : 'Failed to update profile';
             showMessage(message, true);
             return;
         }
+        
         // update local user and UI
         localStorage.setItem('user', JSON.stringify(data.user));
         loadUserInfo();
         showMessage('Profile updated successfully.');
         closeSettings();
+        
     } catch (error) {
         console.error('Update profile error:', error);
         showMessage('Error updating profile. Please try again.', true);

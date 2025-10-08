@@ -7,18 +7,21 @@
 
 <body class="page-mainmenu">
     <div class="menu-container">
-		<div class="welcome-header">
+        <div class="welcome-header">
 			<div style="display:flex; align-items:center; gap:10px;">
 				<img src="../gmba/logo.jpg" alt="Logo" style="height:200px; width:200px; object-fit:contain;">
 				<h1 style="margin:0;">    LAMAN UTAMA</h1>
 			</div>
-			<h2>PORTAL DIGITAL PAKATAN DARULNAIM</h2>
-		</div>
+            <h2>PORTAL DIGITAL PAKATAN DARULNAIM</h2>
+        </div>
         
         <div class="user-info" id="userInfo">
-            <p><strong>Selamat Datang, <span id="userName">User</span>!</strong></p>
-            <p>Peranan: <span id="userRole">Ahli</span></p>
-            <p>Email: <span id="userEmail">user@example.com</span></p>
+            <img id="userAvatar" class="user-avatar" src="../gmba/default.jpg" alt="Avatar">
+            <div>
+                <p><strong>Selamat Datang, <span id="userName">User</span>!</strong></p>
+                <p>Peranan: <span id="userRole">Ahli</span></p>
+                <p>Email: <span id="userEmail">user@example.com</span></p>
+            </div>
         </div>
         
 		<div id="message" class="message"></div>
@@ -47,7 +50,7 @@
                 🧾 Generator QR (Sign Up)
             </button>
             <button class="menu-btn" onclick="openSettings()">
-                ⚙️ Pengaturan
+                ⚙️ Tetapan
             </button>
 			</div>
 			<div class="menu-panels">
@@ -104,7 +107,7 @@
 				<div id="meetingMgmtSection" style="display:none; margin: 16px 0;">
 					<div style="background:#ffffff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
 						<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-							<h3 style="margin:0;">Create Meeting</h3>
+							<h3 style="margin:0;">Tambah Mesyuarat</h3>
 							<button type="button" class="logout-btn" onclick="closeMeetingManagement()">Close</button>
 						</div>
 						<form id="meetingForm">
@@ -304,20 +307,27 @@
         <div id="settingsSection" style="display:none; max-width:800px; margin: 16px auto;">
             <div style="background:#ffffff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                    <h3 style="margin:0;">Pengaturan</h3>
+                    <h3 style="margin:0;">Tetapan</h3>
                     <button type="button" class="logout-btn" onclick="closeSettings()">Close</button>
                 </div>
-                <form id="settingsForm">
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-                        <div>
-                            <label for="set_fullName">Nama Penuh</label>
-                            <input id="set_fullName" name="fullName" type="text" minlength="1" style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
+                    <form id="settingsForm">
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                            <div>
+                                <label for="set_fullName">Nama Penuh</label>
+                                <input id="set_fullName" name="fullName" type="text" minlength="1" style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
+                            </div>
+                            <div>
+                                <label for="set_password">Kata Laluan Baru (pilihan)</label>
+                                <input id="set_password" name="password" type="password" minlength="6" placeholder="Leave blank to keep current" style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
+                            </div>
+                            <div style="grid-column:1 / -1;">
+                                <label for="set_avatar">Foto Profil (pilihan)</label>
+                                <input id="set_avatar" name="avatar" type="file" accept="image/*" style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
+                                <div id="avatarPreview" style="margin-top:8px; text-align:center;">
+                                    <img id="previewImg" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:1px solid #ccc; display:none;">
+                                </div>
+                            </div>
                         </div>
-                        <div>
-                            <label for="set_password">Kata Laluan Baru (pilihan)</label>
-                            <input id="set_password" name="password" type="password" minlength="6" placeholder="Leave blank to keep current" style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
-                        </div>
-                    </div>
                     <div style="margin-top:16px; display:flex; gap:8px;">
                         <button type="submit" class="menu-btn">Simpan Perubahan</button>
                         <button type="button" class="logout-btn" onclick="closeSettings()">Batal</button>
@@ -326,7 +336,6 @@
             </div>
         </div>
     </div>
-
     <button class="logout-btn" onclick="logout()">
         🚪 Log Keluar
     </button>

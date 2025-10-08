@@ -130,6 +130,18 @@ body.page-mainmenu {
     padding: 15px;
     border-radius: 5px;
     margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.user-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #e9ecef;
+    border: 1px solid #dee2e6;
 }
 
 /* News styles */
