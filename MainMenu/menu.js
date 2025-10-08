@@ -461,7 +461,9 @@ async function openMeeting() {
     closeHome();
     closeMeetingManagement();
     const section = document.getElementById('meetingSection');
-    if (section) { section.style.display = 'block'; }
+    if (section) { 
+        section.classList.remove('hidden');
+    }
     
     // Load upcoming meeting from database
     await loadUpcomingMeeting();
@@ -515,7 +517,7 @@ async function loadUpcomingMeeting() {
 
 function closeMeeting() {
     const section = document.getElementById('meetingSection');
-    if (section) { section.style.display = 'none'; }
+    if (section) { section.classList.add('hidden'); }
 }
 
 async function setMeetingRSVP(status) {
@@ -568,7 +570,9 @@ function openMeetingManagement() {
     closeHome();
     closeMeeting();
     const section = document.getElementById('meetingMgmtSection');
-    if (section) { section.style.display = 'block'; }
+    if (section) { 
+        section.classList.remove('hidden');
+    }
     
     // Load meetings list
     loadMeetingsList();
@@ -578,11 +582,11 @@ function toggleMeetingForm() {
     const formContainer = document.getElementById('meetingFormContainer');
     const toggleBtn = document.getElementById('toggleFormBtn');
     
-    if (formContainer.style.display === 'none') {
-        formContainer.style.display = 'block';
+    if (formContainer.classList.contains('hidden')) {
+        formContainer.classList.remove('hidden');
         toggleBtn.textContent = 'Tutup Form';
     } else {
-        formContainer.style.display = 'none';
+        formContainer.classList.add('hidden');
         toggleBtn.textContent = 'Tambah Mesyuarat';
         // Reset form
         document.getElementById('meetingForm').reset();
@@ -689,12 +693,12 @@ let pendingDeleteId = null;
 function showDeleteConfirmation(meetingId) {
     pendingDeleteId = meetingId;
     const modal = document.getElementById('deleteConfirmModal');
-    modal.style.display = 'flex';
+    modal.classList.remove('hidden');
 }
 
 function hideDeleteConfirmation() {
     const modal = document.getElementById('deleteConfirmModal');
-    modal.style.display = 'none';
+    modal.classList.add('hidden');
     pendingDeleteId = null;
 }
 
@@ -737,7 +741,7 @@ function editMeeting(meetingId) {
 
 function closeMeetingManagement() {
     const section = document.getElementById('meetingMgmtSection');
-    if (section) { section.style.display = 'none'; }
+    if (section) { section.classList.add('hidden'); }
 }
 
 // Handle create meeting form

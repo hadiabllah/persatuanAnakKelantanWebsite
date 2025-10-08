@@ -8,9 +8,9 @@
 <body class="page-mainmenu">
     <div class="menu-container">
         <div class="welcome-header">
-			<div style="display:flex; align-items:center; gap:10px;">
-				<img src="../gmba/logo.jpg" alt="Logo" style="height:200px; width:200px; object-fit:contain;">
-				<h1 style="margin:0;">    LAMAN UTAMA</h1>
+			<div class="header-content">
+				<img src="../gmba/logo.jpg" alt="Logo" class="header-logo">
+				<h1 class="header-title">    LAMAN UTAMA</h1>
 			</div>
             <h2>PORTAL DIGITAL PAKATAN DARULNAIM</h2>
         </div>
@@ -31,7 +31,7 @@
 			<button class="menu-btn" onclick="openHome()">
 				🏡 Home
 			</button>
-            <button id="btnAddUser" class="menu-btn" onclick="openAddUser()" style="display:none;">
+            <button id="btnAddUser" class="menu-btn hidden" onclick="openAddUser()">
                 ➕ Tambah Ahli
             </button>
             <button id="btnMemberMgmt" class="menu-btn" onclick="openUsers()">
@@ -76,26 +76,26 @@
 				</div>
 
 				<!-- Meeting Attendance Section -->
-				<div id="meetingSection" style="display:none; margin: 16px 0;">
-					<div style="background:#ffffff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
-						<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-							<h3 style="margin:0;">Upcoming Meeting</h3>
+				<div id="meetingSection" class="section hidden">
+					<div class="section-panel">
+						<div class="section-header">
+							<h3 class="section-title">Upcoming Meeting</h3>
 							<button type="button" class="logout-btn" onclick="closeMeeting()">Tutup</button>
 						</div>
-						<div style="display:grid; grid-template-columns:1fr; gap:8px;">
+						<div class="meeting-details">
 							<div><strong>Title:</strong> <span id="meet_title">Mesyuarat Bulanan Persatuan</span></div>
 							<div><strong>Tanggal & Masa:</strong> <span id="meet_datetime">25 Nov 2025, 8:00 malam</span></div>
 							<div><strong>Tempat:</strong> <span id="meet_place">Dewan Utama, Kota Bharu</span></div>
 							<div>
 								<strong>Agenda:</strong>
-								<ol id="meet_agenda" style="margin:6px 0 0 18px;">
+								<ol id="meet_agenda" class="agenda-list">
 									<li>Laporan kewangan</li>
 									<li>Kemas kini program komuniti</li>
 									<li>Lain-lain hal</li>
 								</ol>
 							</div>
-							<div id="rsvpStatus" style="margin-top:8px; font-size:14px; color:#555;">RSVP: Belum dijawab</div>
-							<div style="display:flex; gap:8px; margin-top:8px;">
+							<div id="rsvpStatus" class="rsvp-status">RSVP: Belum dijawab</div>
+							<div class="rsvp-buttons">
 								<button class="menu-btn" onclick="setMeetingRSVP('attending')">Saya Hadir</button>
 								<button class="logout-btn" onclick="setMeetingRSVP('not_attending')">Tidak Hadir</button>
 							</div>
@@ -104,45 +104,45 @@
 				</div>
                 
 				<!-- Delete Confirmation Modal -->
-				<div id="deleteConfirmModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;">
-					<div style="background:white; padding:24px; border-radius:8px; box-shadow:0 4px 20px rgba(0,0,0,0.3); max-width:400px; width:90%; text-align:center;">
-						<h3 style="margin:0 0 16px 0; color:#333;">Padam Mesyuarat</h3>
-						<p style="margin:0 0 20px 0; color:#666;">Adakah anda pasti mahu memadam mesyuarat ini?</p>
-						<div style="display:flex; gap:12px; justify-content:center;">
-							<button id="confirmDeleteBtn" style="background:#dc3545; color:white; border:none; padding:10px 20px; border-radius:4px; cursor:pointer; font-size:14px;">Ya</button>
-							<button id="cancelDeleteBtn" style="background:#6c757d; color:white; border:none; padding:10px 20px; border-radius:4px; cursor:pointer; font-size:14px;">Batal</button>
+				<div id="deleteConfirmModal" class="modal hidden">
+					<div class="modal-content">
+						<h3 class="modal-title">Padam Mesyuarat</h3>
+						<p class="modal-message">Adakah anda pasti mahu memadam mesyuarat ini?</p>
+						<div class="modal-buttons">
+							<button id="confirmDeleteBtn" class="btn-confirm">Ya</button>
+							<button id="cancelDeleteBtn" class="btn-cancel">Batal</button>
 						</div>
 					</div>
 				</div>
 
 				<!-- Meeting Management (Create Meeting) Section -->
-				<div id="meetingMgmtSection" style="display:none; margin: 16px 0;">
-					<div style="background:#ffffff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
-						<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-							<h3 style="margin:0;">Pengurusan Mesyuarat</h3>
+				<div id="meetingMgmtSection" class="section hidden">
+					<div class="section-panel">
+						<div class="section-header">
+							<h3 class="section-title">Pengurusan Mesyuarat</h3>
 							<button type="button" class="logout-btn" onclick="closeMeetingManagement()">Tutup</button>
 						</div>
 						
 						<!-- Meeting List -->
-						<div style="margin-bottom:20px;">
-							<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-								<h4 style="margin:0;">Senarai Mesyuarat</h4>
+						<div class="meeting-list-container">
+							<div class="list-header">
+								<h4 class="list-title">Senarai Mesyuarat</h4>
 								<button type="button" class="menu-btn" onclick="toggleMeetingForm()" id="toggleFormBtn">Tambah Mesyuarat</button>
 							</div>
-							<div style="overflow-x:auto; background:#f8f9fa; border-radius:6px; border:1px solid #e9ecef;">
-								<table style="width:100%; border-collapse:collapse; background:#ffffff;">
+							<div class="table-container">
+								<table class="meetings-table">
 									<thead>
-										<tr style="background:#e9ecef; text-align:left; border-bottom:2px solid #dee2e6;">
-											<th style="padding:12px 8px; font-weight:600; color:#495057;">Tajuk</th>
-											<th style="padding:12px 8px; font-weight:600; color:#495057;">Tarikh & Masa</th>
-											<th style="padding:12px 8px; font-weight:600; color:#495057;">Tempat</th>
-											<th style="padding:12px 8px; font-weight:600; color:#495057;">Status</th>
-											<th style="padding:12px 8px; font-weight:600; color:#495057;">Tindakan</th>
+										<tr class="table-header">
+											<th class="table-cell">Tajuk</th>
+											<th class="table-cell">Tarikh & Masa</th>
+											<th class="table-cell">Tempat</th>
+											<th class="table-cell">Status</th>
+											<th class="table-cell">Tindakan</th>
 										</tr>
 									</thead>
 									<tbody id="meetingsTableBody">
 										<tr>
-											<td colspan="5" style="padding:20px; text-align:center; color:#666;">Memuatkan mesyuarat...</td>
+											<td colspan="5" class="loading-cell">Memuatkan mesyuarat...</td>
 										</tr>
 									</tbody>
 								</table>
@@ -150,28 +150,28 @@
 						</div>
 
 						<!-- Create Meeting Form (Hidden by default) -->
-						<div id="meetingFormContainer" style="display:none;">
-							<h4 style="margin:0 0 12px 0;">Tambah Mesyuarat Baharu</h4>
+						<div id="meetingFormContainer" class="form-container hidden">
+							<h4 class="form-title">Tambah Mesyuarat Baharu</h4>
 							<form id="meetingForm">
-								<div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
-									<div>
+								<div class="form-grid">
+									<div class="form-field">
 										<label for="mf_title">Tajuk</label>
-										<input id="mf_title" name="title" type="text" required style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
+										<input id="mf_title" name="title" type="text" required class="form-input">
 									</div>
-									<div>
+									<div class="form-field">
 										<label for="mf_datetime">Tarikh & Masa</label>
-										<input id="mf_datetime" name="datetime" type="datetime-local" required style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
+										<input id="mf_datetime" name="datetime" type="datetime-local" required class="form-input">
 									</div>
-									<div style="grid-column:1 / -1;">
+									<div class="form-field full-width">
 										<label for="mf_place">Tempat</label>
-										<input id="mf_place" name="place" type="text" required style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
+										<input id="mf_place" name="place" type="text" required class="form-input">
 									</div>
-									<div style="grid-column:1 / -1;">
+									<div class="form-field full-width">
 										<label for="mf_agenda">Agenda (satu item setiap baris)</label>
-										<textarea id="mf_agenda" name="agenda" rows="4" style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;"></textarea>
+										<textarea id="mf_agenda" name="agenda" rows="4" class="form-textarea"></textarea>
 									</div>
 								</div>
-								<div style="margin-top:16px; display:flex; gap:8px;">
+								<div class="form-buttons">
 									<button type="submit" class="menu-btn">Cipta Mesyuarat</button>
 									<button type="button" class="logout-btn" onclick="toggleMeetingForm()">Batal</button>
 								</div>
@@ -368,7 +368,7 @@
                                 <label for="set_avatar">Foto Profil (pilihan)</label>
                                 <input id="set_avatar" name="avatar" type="file" accept="image/*" style="width:100%; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
                                 <div id="avatarPreview" style="margin-top:8px; text-align:center;">
-                                    <img id="previewImg" style="width:80px; height:80px; border-radius:50%; object-fit:cover; border:1px solid #ccc; display:none;">
+                                    <img id="previewImg" style="width:120px; height:120px; border-radius:50%; object-fit:cover; border:2px solid #ccc; display:none;">
                                 </div>
                             </div>
                         </div>
