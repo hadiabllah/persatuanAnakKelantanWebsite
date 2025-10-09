@@ -542,8 +542,8 @@ async function setMeetingRSVP(status) {
         const data = await response.json();
         
         if (response.ok && data.success) {
-            localStorage.setItem('meeting_rsvp', status);
-            updateRSVPStatus(status);
+        localStorage.setItem('meeting_rsvp', status);
+        updateRSVPStatus(status);
             showMessage(data.message);
         } else {
             const message = data && data.message ? data.message : 'Failed to update RSVP';

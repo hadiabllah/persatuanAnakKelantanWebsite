@@ -28,7 +28,8 @@
 
 		<div class="menu-layout">
 			<div class="menu-buttons">
-			<button class="menu-btn" onclick="openHome()">
+            <div class="sidebar">
+            <button class="menu-btn" onclick="openHome()">
 				🏡 Home
 			</button>
             <button id="btnAddUser" class="menu-btn hidden" onclick="openAddUser()">
@@ -52,6 +53,7 @@
             <button class="menu-btn" onclick="openSettings()">
                 ⚙️ Tetapan
             </button>
+            </div>
 			</div>
 			<div class="menu-panels">
 				<!-- Home Section with News -->
@@ -182,25 +184,38 @@
 
 				<!-- Yuran Keahlian (Membership Payment) Section -->
 				<div id="paymentSection" style="display:none; margin: 16px 0;">
-					<div style="background:#ffffff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+					<div class="section-panel">
 						<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
 							<h3 style="margin:0;">Yuran Keahlian</h3>
 							<button type="button" class="logout-btn" onclick="closePayment()">Tutup</button>
 						</div>
 						<div class="payment-grid">
-							<div class="field-row">
-								<label for="pay_total">Jumlah Perlu Dibayar (RM)</label>
-								<input id="pay_total" type="number" step="0.01" value="0.00" oninput="updatePaymentBalance()">
-							</div>
-							<div class="field-row">
-								<label for="pay_paid">Sudah Dibayar (RM)</label>
-								<input id="pay_paid" type="number" step="0.01" value="0.00" oninput="updatePaymentBalance()">
-							</div>
+                            <div class="field-row">
+                                <label for="pay_total">Jumlah Perlu Dibayar (RM)</label>
+                                <input id="pay_total" type="number" step="0.01" value="0.00" readonly>
+                            </div>
+                            <div class="field-row">
+                                <label for="pay_paid">Sudah Dibayar (RM)</label>
+                                <input id="pay_paid" type="number" step="0.01" value="0.00" readonly>
+                            </div>
 							<div class="field-row">
 								<label for="pay_balance">Baki Pembayaran (RM)</label>
 								<input id="pay_balance" type="number" step="0.01" value="0.00" readonly>
 							</div>
+						<div class="field-row">
+							<label for="pay_method">Kaedah Pembayaran</label>
+							<select id="pay_method" class="panel-input">
+								<option value="Tunai" selected>Tunai</option>
+								<option value="Pemindahan Bank">Pemindahan Bank</option>
+								<option value="FPX/Online">FPX/Online</option>
+								<option value="Kad">Kad</option>
+							</select>
 						</div>
+						</div>
+					<div style="margin-top:16px; display:flex; gap:8px;">
+						<button type="button" class="menu-btn" onclick="processPayment()">Bayar Sekarang</button>
+						<button type="button" class="logout-btn" onclick="closePayment()">Batal</button>
+					</div>
 					</div>
 				</div>
 
@@ -235,10 +250,10 @@
                     <h3 style="margin:0;">Ahli</h3>
                     <button type="button" class="logout-btn" onclick="closeUsers()">Tutup</button>
                 </div>
-                <div style="display:flex; gap:12px; align-items:end; margin-bottom:12px;">
+                <div class="filters-row">
                     <div>
                         <label for="filter_role">Filter Peranan</label>
-                        <select id="filter_role" style="width:220px; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
+                        <select id="filter_role" class="panel-input" style="width:240px;">
                             <option value="">Semua Peranan</option>
                             <option value="Pentadbir">Pentadbir</option>
                             <option value="Setiausaha">Setiausaha</option>
@@ -248,7 +263,7 @@
                     </div>
                     <div>
                         <label for="filter_occupation">Filter Pekerjaan</label>
-                        <select id="filter_occupation" style="width:280px; padding:10px; margin-top:6px; border:1px solid #ccc; border-radius:4px;">
+                        <select id="filter_occupation" class="panel-input" style="width:300px;">
                             <option value="">Semua Bidang</option>
                             <option value="Keselamatan">Keselamatan</option>
                             <option value="Perkhidmatan & Hospitaliti">Perkhidmatan & Hospitaliti</option>
@@ -348,8 +363,8 @@
         </div>
 
         <!-- Settings Section -->
-        <div id="settingsSection" style="display:none; max-width:800px; margin: 16px auto;">
-            <div style="background:#ffffff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+		<div id="settingsSection" style="display:none; max-width:800px; margin: 16px auto;">
+			<div class="section-panel">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
                     <h3 style="margin:0;">Tetapan</h3>
                     <button type="button" class="logout-btn" onclick="closeSettings()">Tutup</button>

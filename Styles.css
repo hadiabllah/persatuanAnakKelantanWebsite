@@ -99,7 +99,7 @@ body.page-mainmenu {
 /* Main Menu Styles */
 .menu-container {
     width: 100%;
-    max-width: 1100px;
+    max-width: 1400px;
     min-height: 100vh;
     margin: 0 auto;
     padding: 24px;
@@ -121,8 +121,47 @@ body.page-mainmenu {
 }
 
 .welcome-header {
-    text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
+    background: #c95353; /* header bar color */
+    color: #fff;
+    padding: 10px 16px;
+    border-radius: 6px;
+}
+
+/* Header polish */
+.header-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: flex-start; /* left aligned like example */
+}
+.header-logo {
+    width: 200px;
+    height: 200px;
+    object-fit: contain;
+}
+.header-title {
+    margin: 0;
+    font-size: 28px;
+    letter-spacing: 1px;
+    color: #fff;
+}
+
+/* Filter row improvements */
+#usersSection .filters-row {
+    display: flex;
+    gap: 12px;
+    align-items: end;
+    margin-bottom: 12px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+#usersSection .filters-row select {
+    width: 240px;
+}
+#usersSection .filters-row .menu-btn {
+    height: 40px;
+    align-self: end;
 }
 
 .user-info {
@@ -394,19 +433,18 @@ body.page-mainmenu {
 }
 
 .menu-btn {
-    padding: 15px 20px;
+    padding: 12px 18px;
     background: #007bff;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 6px;
     cursor: pointer;
     font-size: 16px;
-    transition: background-color 0.3s;
+    transition: background-color 0.2s ease-in-out, transform 0.05s ease-in-out;
 }
 
-.menu-btn:hover {
-    background: #0056b3;
-}
+.menu-btn:hover { background: #0056b3; }
+.menu-btn:active { transform: translateY(1px); }
 
 /* Each button inside its own card */
 .menu-card {
@@ -433,17 +471,47 @@ body.page-mainmenu {
 
 .logout-btn {
     background: #dc3545;
-    padding: 10px 20px;
+    padding: 10px 18px;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
-    transition: background-color 0.3s;
+    transition: background-color 0.2s ease-in-out, transform 0.05s ease-in-out;
 }
 
-.logout-btn:hover {
-    background: #c82333;
+.logout-btn:hover { background: #c82333; }
+.logout-btn:active { transform: translateY(1px); }
+
+/* Sidebar styles */
+.sidebar {
+    background: #fbf2f2;
+    border: 1px solid #f0dada;
+    border-radius: 8px;
+    padding: 10px;
+}
+.sidebar .menu-btn {
+    background: transparent;
+    color: #333;
+    border: 1px solid #e6e6e6;
+    text-align: left;
+    width: 100%;
+}
+.sidebar .menu-btn:hover {
+    background: #f7eaea;
+}
+.sidebar .menu-btn.active {
+    background: #e9cfcf;
+    border-color: #d8b1b1;
+}
+
+/* Shared input styles across panels */
+.panel-input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
 
 /* Top navigation */
