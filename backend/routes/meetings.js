@@ -23,8 +23,17 @@ const authenticate = async (req, res, next) => {
   }
 };
 
+// Role middleware for meeting management (admin and setiausaha only)
+const requireMeetingManagement = (req, res, next) => {
+  const role = req.user?.role;
+  if (!(role === 'Pentadbir' || role === 'Setiausaha')) {
+    return res.status(403).json({ success: false, message: 'Admin or Setiausaha access required for meeting management' });
+  }
+  next();
+};
+
 // Create a new meeting
-router.post('/create', authenticate, async (req, res) => {
+router.post('/create', authenticate, requireMeetingManagement, async (req, res) => {
   try {
     const { title, datetime, place, agenda } = req.body;
     const createdBy = req.user.id;
@@ -215,8 +224,8 @@ router.put('/:id', authenticate, async (req, res) => {
       });
     }
 
-    // Check if user is the creator or admin
-    if (meeting.createdBy.toString() !== userId && req.user.role !== 'Pentadbir') {
+    // Check if user is the creator, admin, or setiausaha
+    if (meeting.createdBy.toString() !== userId && req.user.role !== 'Pentadbir' && req.user.role !== 'Setiausaha') {
       return res.status(403).json({
         success: false,
         message: 'Not authorized to update this meeting'
@@ -267,8 +276,8 @@ router.delete('/:id', authenticate, async (req, res) => {
       });
     }
 
-    // Check if user is the creator or admin
-    if (meeting.createdBy.toString() !== userId && req.user.role !== 'Pentadbir') {
+    // Check if user is the creator, admin, or setiausaha
+    if (meeting.createdBy.toString() !== userId && req.user.role !== 'Pentadbir' && req.user.role !== 'Setiausaha') {
       return res.status(403).json({
         success: false,
         message: 'Not authorized to delete this meeting'

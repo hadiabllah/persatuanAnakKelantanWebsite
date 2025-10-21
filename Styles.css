@@ -4,7 +4,7 @@
 }
 
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f2f2f2;
     background-image: linear-gradient(rgba(255,255,255,0.65), rgba(255,255,255,0.65)), url('gmba/kelantan.png');
     background-size: cover;
@@ -52,27 +52,34 @@ body.page-mainmenu {
     border: 2px dashed #bdbdbd; /* Placeholder style */
 }
 .brand-title {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: 18px;
     margin: 0;
 }
 .brand-subtitle {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: 12px;
     color: #666;
     margin: 6px 0 0 0;
 }
 .input-label {
     display: block;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: 12px;
     color: #333;
     margin-top: 12px;
 }
 .login-container input[type="text"],
-.login-container input[type="password"] {
+.login-container input[type="password"],
+.login-container input[type="email"],
+.login-container select {
     width: 100%;
     padding: 10px;
     margin: 0; /* spacing handled by container gap */
     border: 1px solid #ccc;
     border-radius: 4px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
 }
 .login-container button {
     width: 100%;
@@ -81,6 +88,7 @@ body.page-mainmenu {
     color: #fff;
     border: none;
     border-radius: 4px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     font-size: 16px;
     cursor: pointer;
 }
@@ -341,18 +349,55 @@ body.page-mainmenu {
     width: 100%;
     border-collapse: collapse;
     background: #ffffff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.meetings-table th {
+    background: #2c3e50;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 12px 8px;
+    text-align: left;
+    border-bottom: 2px solid #34495e;
+}
+
+.meetings-table td {
+    padding: 10px 8px;
+    border-bottom: 1px solid #ecf0f1;
+    font-size: 13px;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.meetings-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+.meetings-table tr:nth-child(even) {
+    background-color: #fafbfc;
 }
 
 .table-header {
     background: #e9ecef;
     text-align: left;
     border-bottom: 2px solid #dee2e6;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: #2c3e50;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .table-cell {
     padding: 12px 8px;
     font-weight: 600;
     color: #495057;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 13px;
 }
 
 .loading-cell {
@@ -548,9 +593,40 @@ body.page-mainmenu {
     margin: 0; 
 }
 
-/* Make users table font smaller and fill the panel */
+/* Users table styling for better readability */
 #usersSection table {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#usersSection table th {
+    background: #2c3e50;
+    color: #ffffff;
+    font-weight: 700;
     font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 12px 8px;
+    text-align: left;
+    border-bottom: 2px solid #34495e;
+}
+
+#usersSection table td {
+    padding: 10px 8px;
+    border-bottom: 1px solid #ecf0f1;
+    font-size: 13px;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+#usersSection table tr:hover {
+    background-color: #f8f9fa;
+}
+
+#usersSection table tr:nth-child(even) {
+    background-color: #fafbfc;
 }
 
 /* Make Add User inputs shorter */
