@@ -144,6 +144,12 @@ document.addEventListener('DOMContentLoaded', function() {
     if (confirmDeleteBtn) confirmDeleteBtn.addEventListener('click', confirmDeleteMeeting);
     if (cancelDeleteBtn) cancelDeleteBtn.addEventListener('click', hideDeleteConfirmation);
     
+    // Wire up ahli delete confirmation modal
+    const confirmAhliDeleteBtn = document.getElementById('confirmAhliDeleteBtn');
+    const cancelAhliDeleteBtn = document.getElementById('cancelAhliDeleteBtn');
+    if (confirmAhliDeleteBtn) confirmAhliDeleteBtn.addEventListener('click', confirmDeleteAhli);
+    if (cancelAhliDeleteBtn) cancelAhliDeleteBtn.addEventListener('click', hideAhliDeleteConfirmation);
+    
     // default QR URL
     const qrUrl = document.getElementById('qr_url');
     if (qrUrl && !qrUrl.value) { qrUrl.value = 'http://localhost:3000/signup'; }
@@ -778,7 +784,18 @@ async function fetchAhli() {
             renderAhli([]);
             return;
         }
-        renderAhli(data.ahli || []);
+        const items = Array.isArray(data.ahli) ? data.ahli.slice() : [];
+        // Sort by numeric value of idNo (handles pure numbers or prefixed strings like PAK-0001)
+        items.sort((a, b) => {
+            const parseNum = (val) => {
+                const s = (val == null ? '' : String(val));
+                const m = s.match(/\d+/);
+                const num = m ? parseInt(m[0], 10) : parseInt(s, 10);
+                return Number.isFinite(num) ? num : Number.POSITIVE_INFINITY;
+            };
+            return parseNum(a.idNo) - parseNum(b.idNo);
+        });
+        renderAhli(items);
     } catch (error) {
         console.error('Fetch ahli error:', error);
         showMessage('Ralat memuatkan senarai ahli.', true);
@@ -828,17 +845,43 @@ function renderAhli(items) {
         btn.style.backgroundColor = '#dc3545';
         btn.style.border = 'none';
         btn.style.cursor = 'pointer';
-        btn.onclick = () => deleteAhli(a._id, a.idNo || a.fullName || a.email);
+        btn.onclick = () => showAhliDeleteConfirmation(a._id, a.idNo || a.fullName || a.email);
         tdAction.appendChild(btn);
         tr.appendChild(tdAction);
         tbody.appendChild(tr);
     });
 }
 
-async function deleteAhli(id, label) {
+let pendingAhliDelete = null;
+
+function showAhliDeleteConfirmation(id, label) {
+    pendingAhliDelete = { id, label };
+    const modal = document.getElementById('ahliDeleteConfirmModal');
+    if (modal) {
+        const msg = modal.querySelector('.modal-message');
+        if (msg) { msg.textContent = `Adakah anda pasti mahu memadam ahli "${label}"? Tindakan ini tidak dapat dibatalkan.`; }
+        modal.classList.remove('hidden');
+    }
+}
+
+function hideAhliDeleteConfirmation() {
+    const modal = document.getElementById('ahliDeleteConfirmModal');
+    if (modal) { modal.classList.add('hidden'); }
+    pendingAhliDelete = null;
+}
+
+async function confirmDeleteAhli() {
+    if (!pendingAhliDelete) return;
+    const { id, label } = pendingAhliDelete;
+    try {
+        await deleteAhli(id, label, /*silent*/ true);
+    } finally {
+        hideAhliDeleteConfirmation();
+    }
+}
+
+async function deleteAhli(id, label, silent = false) {
     if (!id) return;
-    const ok = confirm(`Padam ahli "${label}"? Tindakan ini tidak boleh diundur.`);
-    if (!ok) return;
     try {
         const token = localStorage.getItem('token');
         const response = await fetch(`${API_BASE}/ahli/${id}`, {
@@ -851,7 +894,7 @@ async function deleteAhli(id, label) {
             showMessage(message, true);
             return;
         }
-        showMessage('Ahli berjaya dipadam.');
+        if (!silent) { showMessage('Ahli berjaya dipadam.'); }
         fetchAhli();
     } catch (error) {
         console.error('Delete ahli error:', error);

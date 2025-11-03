@@ -120,6 +120,18 @@
 					</div>
 				</div>
 
+                <!-- Ahli Delete Confirmation Modal -->
+                <div id="ahliDeleteConfirmModal" class="modal hidden">
+                    <div class="modal-content">
+                        <h3 class="modal-title">Padam Ahli</h3>
+                        <p class="modal-message">Adakah anda pasti mahu memadam ahli ini?</p>
+                        <div class="modal-buttons">
+                            <button id="confirmAhliDeleteBtn" class="btn-confirm">Ya</button>
+                            <button id="cancelAhliDeleteBtn" class="btn-cancel">Batal</button>
+                        </div>
+                    </div>
+                </div>
+
 				<!-- User Delete Confirmation Modal -->
 				<div id="userDeleteConfirmModal" class="modal hidden">
 					<div class="modal-content">
@@ -273,7 +285,7 @@
                     <form id="ahliForm">
                         <div class="form-grid">
                             <div class="form-field">
-                                <label for="al_idno">ID NO</label>
+                                <label for="al_idno">Nombor Ahli</label>
                                 <input id="al_idno" name="idNo" type="text" class="form-input" placeholder="cth. PAK-0001" required>
                             </div>
                             <div class="form-field">
@@ -332,7 +344,7 @@
                         <thead>
                             <tr style="text-align:left; border-bottom:1px solid #eee;">
                                 <th style="padding:8px;">No</th>
-                                <th style="padding:8px;">ID NO</th>
+                                <th style="padding:8px;">Nombor Ahli</th>
                                 <th style="padding:8px;">Nama Penuh</th>
                                 <th style="padding:8px;">IC</th>
                                 <th style="padding:8px;">Telefon</th>
