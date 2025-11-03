@@ -33,10 +33,13 @@
 				🏡 Home
 			</button>
             <button id="btnAddUser" class="menu-btn" onclick="openAddUser()">
-                ➕ Tambah Ahli
+                ➕ Tambah Pengguna
             </button>
             <button id="btnMemberMgmt" class="menu-btn" onclick="openUsers()">
-                👥 Pengurusan Ahli
+                👥 Pengurusan Pengguna
+            </button>
+            <button id ="btnListMember" class="menu-btn" onclick="openListMember()">
+                👥 Senarai Ahli
             </button>
             <button class="menu-btn" onclick="openPayment()">
                 💰 Pembayaran Keahlian
@@ -254,6 +257,101 @@
             </div>
         </div>
         
+
+        <!-- Senarai Ahli Section -->
+        <div id="ahliSection" style="display:none; max-width:1200px; margin: 16px auto;">
+            <div style="background:#ffffff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                    <h3 style="margin:0;">Senarai Ahli</h3>
+                    <div style="display:flex; gap:8px;">
+                        <button type="button" class="menu-btn" onclick="toggleAhliForm()" id="toggleAhliFormBtn">Tambah Ahli</button>
+                        <button type="button" class="logout-btn" onclick="closeListMember()">Tutup</button>
+                    </div>
+                </div>
+                <div id="ahliFormContainer" class="form-container hidden">
+                    <h4 class="form-title">Tambah Ahli Baharu</h4>
+                    <form id="ahliForm">
+                        <div class="form-grid">
+                            <div class="form-field">
+                                <label for="al_idno">ID NO</label>
+                                <input id="al_idno" name="idNo" type="text" class="form-input" placeholder="cth. PAK-0001" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="al_fullName">Nama Penuh</label>
+                                <input id="al_fullName" name="fullName" type="text" class="form-input" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="al_ic">Nombor IC</label>
+                                <input id="al_ic" name="icNumber" type="text" class="form-input" placeholder="cth. 901010101111">
+                            </div>
+                            <div class="form-field">
+                                <label for="al_phone">Telefon</label>
+                                <input id="al_phone" name="phoneNumber" type="text" class="form-input" placeholder="cth. 0123456789">
+                            </div>
+                            <div class="form-field">
+                                <label for="al_email">Email</label>
+                                <input id="al_email" name="email" type="email" class="form-input" placeholder="nama@contoh.com">
+                            </div>
+                            <div class="form-field full-width">
+                                <label for="al_address">Alamat</label>
+                                <input id="al_address" name="address" type="text" class="form-input" placeholder="Alamat penuh">
+                            </div>
+                            <div class="form-field">
+                                <label for="al_gender">Jantina</label>
+                                <select id="al_gender" name="gender" class="form-input">
+                                    <option value="">Pilih jantina</option>
+                                    <option value="Lelaki">Lelaki</option>
+                                    <option value="Perempuan">Perempuan</option>
+                                </select>
+                            </div>
+                            <div class="form-field">
+                                <label for="al_job">Pekerjaan</label>
+                                <select id="al_job" name="job" class="form-input">
+                                    <option value="">Pilih bidang pekerjaan</option>
+                                    <option value="Keselamatan">Keselamatan</option>
+                                    <option value="Perkhidmatan & Hospitaliti">Perkhidmatan & Hospitaliti</option>
+                                    <option value="Pertanian & Alam Sekitar">Pertanian & Alam Sekitar</option>
+                                    <option value="Undang-Undang & Pendtadbiran">Undang-Undang & Pendtadbiran</option>
+                                    <option value="Seni & Kreatif">Seni & Kreatif</option>
+                                    <option value="Perniagaan & Kewangan">Perniagaan & Kewangan</option>
+                                    <option value="Pendidikan & Latihan">Pendidikan & Latihan</option>
+                                    <option value="Sains & Kesihatan">Sains & Kesihatan</option>
+                                    <option value="Teknologi Maklumat">Teknologi Maklumat</option>
+                                    <option value="Teknikal & Kejuruteraan">Teknikal & Kejuruteraan</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-buttons">
+                            <button type="submit" class="menu-btn">Simpan Ahli</button>
+                            <button type="button" class="logout-btn" onclick="toggleAhliForm()">Batal</button>
+                        </div>
+                    </form>
+                </div>
+                <div style="overflow:auto;">
+                    <table style="width:100%; border-collapse:collapse;">
+                        <thead>
+                            <tr style="text-align:left; border-bottom:1px solid #eee;">
+                                <th style="padding:8px;">No</th>
+                                <th style="padding:8px;">ID NO</th>
+                                <th style="padding:8px;">Nama Penuh</th>
+                                <th style="padding:8px;">IC</th>
+                                <th style="padding:8px;">Telefon</th>
+                                <th style="padding:8px;">Email</th>
+                                <th style="padding:8px;">Alamat</th>
+                                <th style="padding:8px;">Jantina</th>
+                                <th style="padding:8px;">Pekerjaan</th>
+                                <th style="padding:8px;">Tindakan</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ahliTableBody">
+                            <tr>
+                                <td colspan="10" class="loading-cell" style="padding:12px;">Memuatkan ahli...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
 
          <!-- Users (Member Management) Section -->
         <div id="usersSection" style="display:none; max-width:1000px; margin: 16px auto;">

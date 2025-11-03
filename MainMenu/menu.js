@@ -81,7 +81,7 @@ async function verifyToken() {
             // Show Add User button for admin only
             const isAdmin = data.user.role === 'Pentadbir' || data.user.role === 'admin';
             const btn = document.getElementById('btnAddUser');
-            if (btn) { btn.style.display = isAdmin ? 'inline-block' : 'none'; }
+            if (btn) { btn.style.display = 'none'; }
             const btnMember = document.getElementById('btnMemberMgmt');
             if (btnMember) { btnMember.style.display = isAdmin ? 'inline-block' : 'none'; }
             const btnQR = document.getElementById('btnQR');
@@ -266,6 +266,8 @@ function openUsers() {
         showMessage('Admin access required.', true);
         return;
     }
+    // Ensure Senarai Ahli is closed when opening Users management
+    closeListMember();
     // Hide Add User form to avoid overlap
     closeAddUser();
     closePayment();
@@ -362,6 +364,7 @@ function openAddUser() {
     closeHome();
     closeMeeting();
     closeMeetingManagement();
+    closeListMember();
     const section = document.getElementById('addUserSection');
     if (section) { section.style.display = 'block'; }
 }
@@ -380,6 +383,7 @@ function openSettings() {
     closeHome();
     closeMeeting();
     closeMeetingManagement();
+    closeListMember();
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     const nameInput = document.getElementById('set_fullName');
     if (nameInput) { nameInput.value = user.fullName || ''; }
@@ -408,6 +412,7 @@ function openQR() {
     closeHome();
     closeMeeting();
     closeMeetingManagement();
+    closeListMember();
     const section = document.getElementById('qrSection');
     if (section) { section.style.display = 'block'; }
 }
@@ -419,6 +424,7 @@ function closeQR() {
 
 function openPayment() {
     // Hide other sections
+    closeListMember();
     closeUsers();
     closeAddUser();
     closeSettings();
@@ -436,6 +442,7 @@ function closePayment() {
 }
 
 function openHome() {
+    closeListMember();
     closeUsers();
     closeAddUser();
     closeSettings();
@@ -453,6 +460,7 @@ function closeHome() {
 }
 
 async function openMeeting() {
+    closeListMember();
     closeUsers();
     closeAddUser();
     closeSettings();
@@ -562,6 +570,7 @@ function updateRSVPStatus(status) {
 }
 
 function openMeetingManagement() {
+    closeListMember();
     closeUsers();
     closeAddUser();
     closeSettings();
@@ -754,6 +763,202 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+// Senarai Ahli (List Members) based on /api/ahli
+async function fetchAhli() {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_BASE}/ahli`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+        if (!response.ok || !data.success) {
+            const message = data && data.message ? data.message : 'Gagal memuatkan senarai ahli';
+            showMessage(message, true);
+            renderAhli([]);
+            return;
+        }
+        renderAhli(data.ahli || []);
+    } catch (error) {
+        console.error('Fetch ahli error:', error);
+        showMessage('Ralat memuatkan senarai ahli.', true);
+        renderAhli([]);
+    }
+}
+
+function renderAhli(items) {
+    const tbody = document.getElementById('ahliTableBody');
+    if (!tbody) { return; }
+    tbody.innerHTML = '';
+    if (!items.length) {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 10;
+        td.style.padding = '12px';
+        td.textContent = 'Tiada ahli.';
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+        return;
+    }
+    items.forEach((a, idx) => {
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = '1px solid #f0f0f0';
+        const cells = [
+            idx + 1,
+            a.idNo || '-',
+            a.fullName || '-',
+            a.icNumber || '-',
+            a.phoneNumber || '-',
+            a.email || '-',
+            a.address || '-',
+            a.gender || '-',
+            a.job || '-'
+        ];
+        cells.forEach(val => {
+            const td = document.createElement('td');
+            td.style.padding = '8px';
+            td.textContent = val;
+            tr.appendChild(td);
+        });
+        const tdAction = document.createElement('td');
+        tdAction.style.padding = '8px';
+        const btn = document.createElement('button');
+        btn.textContent = 'Padam';
+        btn.className = 'logout-btn';
+        btn.style.backgroundColor = '#dc3545';
+        btn.style.border = 'none';
+        btn.style.cursor = 'pointer';
+        btn.onclick = () => deleteAhli(a._id, a.idNo || a.fullName || a.email);
+        tdAction.appendChild(btn);
+        tr.appendChild(tdAction);
+        tbody.appendChild(tr);
+    });
+}
+
+async function deleteAhli(id, label) {
+    if (!id) return;
+    const ok = confirm(`Padam ahli "${label}"? Tindakan ini tidak boleh diundur.`);
+    if (!ok) return;
+    try {
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_BASE}/ahli/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await response.json();
+        if (!response.ok || !data.success) {
+            const message = data && data.message ? data.message : 'Gagal memadam ahli';
+            showMessage(message, true);
+            return;
+        }
+        showMessage('Ahli berjaya dipadam.');
+        fetchAhli();
+    } catch (error) {
+        console.error('Delete ahli error:', error);
+        showMessage('Ralat memadam ahli.', true);
+    }
+}
+
+function openListMember() {
+    const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+    if (!currentUser || (currentUser.role !== 'Pentadbir' && currentUser.role !== 'admin')) {
+        showMessage('Admin access required.', true);
+        return;
+    }
+    closeUsers();
+    closeAddUser();
+    closeSettings();
+    closeQR();
+    closePayment();
+    closeHome();
+    closeMeeting();
+    closeMeetingManagement();
+    const section = document.getElementById('ahliSection');
+    if (section) { section.style.display = 'block'; }
+    // ensure form is hidden when opening list
+    const form = document.getElementById('ahliFormContainer');
+    const btn = document.getElementById('toggleAhliFormBtn');
+    if (form && !form.classList.contains('hidden')) { form.classList.add('hidden'); }
+    if (btn) { btn.textContent = 'Tambah Ahli'; }
+    fetchAhli();
+}
+
+function closeListMember() {
+    const section = document.getElementById('ahliSection');
+    if (section) { section.style.display = 'none'; }
+}
+
+function toggleAhliForm() {
+    const formContainer = document.getElementById('ahliFormContainer');
+    const toggleBtn = document.getElementById('toggleAhliFormBtn');
+    if (!formContainer || !toggleBtn) return;
+    if (formContainer.classList.contains('hidden')) {
+        formContainer.classList.remove('hidden');
+        toggleBtn.textContent = 'Tutup Form';
+    } else {
+        formContainer.classList.add('hidden');
+        toggleBtn.textContent = 'Tambah Ahli';
+        const f = document.getElementById('ahliForm');
+        if (f) f.reset();
+    }
+}
+
+// Handle ahli form submit
+document.addEventListener('DOMContentLoaded', function() {
+    const f = document.getElementById('ahliForm');
+    if (f) {
+        f.addEventListener('submit', function(e) {
+            e.preventDefault();
+            addAhli();
+        });
+    }
+});
+
+async function addAhli() {
+    try {
+        const form = document.getElementById('ahliForm');
+        if (!form) return;
+        const fd = new FormData(form);
+        const payload = {
+            idNo: (fd.get('idNo') || '').toString().trim(),
+            fullName: (fd.get('fullName') || '').toString().trim(),
+            icNumber: (fd.get('icNumber') || '').toString().trim(),
+            phoneNumber: (fd.get('phoneNumber') || '').toString().trim(),
+            email: (fd.get('email') || '').toString().trim(),
+            address: (fd.get('address') || '').toString().trim(),
+            gender: (fd.get('gender') || '').toString(),
+            job: (fd.get('job') || '').toString()
+        };
+
+        if (!payload.idNo || !payload.fullName) {
+            showMessage('Sila isi ID NO dan Nama Penuh.', true);
+            return;
+        }
+
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_BASE}/ahli`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+        if (!response.ok || !data.success) {
+            const message = data && data.message ? data.message : 'Gagal menambah ahli';
+            showMessage(message, true);
+            return;
+        }
+        showMessage('Ahli berjaya ditambah.');
+        form.reset();
+        toggleAhliForm();
+        fetchAhli();
+    } catch (error) {
+        console.error('Add ahli error:', error);
+        showMessage('Ralat menambah ahli.', true);
+    }
+}
 
 async function createMeeting() {
     const title = (document.getElementById('mf_title')?.value || '').trim();

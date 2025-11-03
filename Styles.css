@@ -411,6 +411,11 @@ body.page-mainmenu {
     margin-top: 20px;
 }
 
+/* Extra spacing below Ahli form before the table */
+#ahliFormContainer {
+    margin-bottom: 16px;
+}
+
 .form-container.hidden {
     display: none;
 }
@@ -626,6 +631,42 @@ body.page-mainmenu {
 }
 
 #usersSection table tr:nth-child(even) {
+    background-color: #fafbfc;
+}
+
+/* Ahli list table styling mirrors usersSection */
+#ahliSection table {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#ahliSection table th {
+    background: #2c3e50;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 12px 8px;
+    text-align: left;
+    border-bottom: 2px solid #34495e;
+}
+
+#ahliSection table td {
+    padding: 10px 8px;
+    border-bottom: 1px solid #ecf0f1;
+    font-size: 13px;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+#ahliSection table tr:hover {
+    background-color: #f8f9fa;
+}
+
+#ahliSection table tr:nth-child(even) {
     background-color: #fafbfc;
 }
 

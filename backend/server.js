@@ -6,6 +6,7 @@ require('dotenv').config();
 const connectDB = require('./config/database');
 const authRoutes = require('./routes/auth');
 const meetingRoutes = require('./routes/meetings');
+const ahliRoutes = require('./routes/ahli');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,6 +25,7 @@ app.use(express.static(path.join(__dirname, '..')));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/meetings', meetingRoutes);
+app.use('/api/ahli', ahliRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -72,4 +74,5 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`Login page: http://localhost:${PORT}/login`);
   console.log(`API endpoints: http://localhost:${PORT}/api/auth`);
+  console.log(`Ahli endpoints: http://localhost:${PORT}/api/ahli`);
 });
