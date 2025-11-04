@@ -39,7 +39,7 @@
                 👥 Pengurusan Pengguna
             </button>
             <button id ="btnListMember" class="menu-btn" onclick="openListMember()">
-                👥 Senarai Ahli
+                👥 Pengurusan Ahli
             </button>
             <button class="menu-btn" onclick="openPayment()">
                 💰 Pembayaran Keahlian
@@ -280,6 +280,19 @@
                         <button type="button" class="logout-btn" onclick="closeListMember()">Tutup</button>
                     </div>
                 </div>
+                <div id="ahliSearchFilters" style="margin-bottom:16px; display:flex; gap:12px; align-items:end; flex-wrap:wrap;">
+                    <div style="flex:1; min-width:200px;">
+                        <label for="ahliSearchName" style="display:block; margin-bottom:4px; font-weight:500;">Cari Nama</label>
+                        <input id="ahliSearchName" type="text" placeholder="Masukkan nama..." style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+                    </div>
+                    <div style="flex:1; min-width:200px;">
+                        <label for="ahliSearchIdNo" style="display:block; margin-bottom:4px; font-weight:500;">Cari Nombor Ahli</label>
+                        <input id="ahliSearchIdNo" type="text" placeholder="Masukkan nombor ahli..." style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+                    </div>
+                    <div>
+                        <button type="button" class="logout-btn" onclick="clearAhliFilters()" style="padding:8px 16px;">Set Semula</button>
+                    </div>
+                </div>
                 <div id="ahliFormContainer" class="form-container hidden">
                     <h4 class="form-title">Tambah Ahli Baharu</h4>
                     <form id="ahliForm">
@@ -361,6 +374,11 @@
                             </tr>
                         </tbody>
                     </table>
+                    <div id="ahliPagination" style="display:flex; justify-content:flex-end; align-items:center; gap:8px; margin-top:12px;">
+                        <button type="button" class="logout-btn" id="ahliPrevBtn">Sebelum</button>
+                        <span id="ahliPageInfo" style="min-width:120px; text-align:center;">Halaman 1 / 1</span>
+                        <button type="button" class="menu-btn" id="ahliNextBtn">Seterusnya</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -369,7 +387,7 @@
         <div id="usersSection" style="display:none; max-width:1000px; margin: 16px auto;">
             <div style="background:#ffffff; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                    <h3 style="margin:0;">Ahli</h3>
+                    <h3 style="margin:0;">Senarai Pengguna</h3>
                     <button type="button" class="logout-btn" onclick="closeUsers()">Tutup</button>
                 </div>
                 <div class="filters-row">

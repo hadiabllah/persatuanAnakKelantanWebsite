@@ -155,6 +155,18 @@ document.addEventListener('DOMContentLoaded', function() {
     if (qrUrl && !qrUrl.value) { qrUrl.value = 'http://localhost:3000/signup'; }
     // Show home by default
     openHome();
+
+    // Ahli pagination buttons
+    const ahliPrevBtn = document.getElementById('ahliPrevBtn');
+    const ahliNextBtn = document.getElementById('ahliNextBtn');
+    if (ahliPrevBtn) ahliPrevBtn.addEventListener('click', () => changeAhliPage(-1));
+    if (ahliNextBtn) ahliNextBtn.addEventListener('click', () => changeAhliPage(1));
+    
+    // Ahli search filters
+    const ahliSearchName = document.getElementById('ahliSearchName');
+    const ahliSearchIdNo = document.getElementById('ahliSearchIdNo');
+    if (ahliSearchName) ahliSearchName.addEventListener('input', applyAhliFilters);
+    if (ahliSearchIdNo) ahliSearchIdNo.addEventListener('input', applyAhliFilters);
 });
 
 // Fetch and render users
@@ -795,15 +807,26 @@ async function fetchAhli() {
             };
             return parseNum(a.idNo) - parseNum(b.idNo);
         });
-        renderAhli(items);
+        ahliAllItems = items;
+        applyAhliFilters();
     } catch (error) {
         console.error('Fetch ahli error:', error);
         showMessage('Ralat memuatkan senarai ahli.', true);
+        ahliAllItems = [];
+        ahliFilteredItems = [];
+        ahliCurrentPage = 1;
         renderAhli([]);
+        updateAhliPaginationControls(0);
     }
 }
 
-function renderAhli(items) {
+// Pagination state for Ahli
+let ahliAllItems = [];
+let ahliFilteredItems = [];
+let ahliPageSize = 50;
+let ahliCurrentPage = 1;
+
+function renderAhli(items, startIndex = 0) {
     const tbody = document.getElementById('ahliTableBody');
     if (!tbody) { return; }
     tbody.innerHTML = '';
@@ -815,13 +838,14 @@ function renderAhli(items) {
         td.textContent = 'Tiada ahli.';
         tr.appendChild(td);
         tbody.appendChild(tr);
+        updateAhliPaginationControls(0);
         return;
     }
     items.forEach((a, idx) => {
         const tr = document.createElement('tr');
         tr.style.borderBottom = '1px solid #f0f0f0';
         const cells = [
-            idx + 1,
+            startIndex + idx + 1,
             a.idNo || '-',
             a.fullName || '-',
             a.icNumber || '-',
@@ -850,6 +874,44 @@ function renderAhli(items) {
         tr.appendChild(tdAction);
         tbody.appendChild(tr);
     });
+    updateAhliPaginationControls(ahliFilteredItems.length);
+}
+
+function renderAhliPage() {
+    const total = ahliFilteredItems.length;
+    const totalPages = Math.max(1, Math.ceil(total / ahliPageSize));
+    // Clamp current page to valid range
+    if (ahliCurrentPage > totalPages) ahliCurrentPage = totalPages;
+    if (ahliCurrentPage < 1) ahliCurrentPage = 1;
+    const start = (ahliCurrentPage - 1) * ahliPageSize;
+    const end = start + ahliPageSize;
+    const pageItems = ahliFilteredItems.slice(start, end);
+    renderAhli(pageItems, start);
+}
+
+function changeAhliPage(delta) {
+    const total = ahliFilteredItems.length;
+    const totalPages = Math.max(1, Math.ceil(total / ahliPageSize));
+    const newPage = ahliCurrentPage + delta;
+    // Only change page if it's within valid range
+    if (newPage >= 1 && newPage <= totalPages) {
+        ahliCurrentPage = newPage;
+        renderAhliPage();
+    }
+}
+
+function updateAhliPaginationControls(total) {
+    const prevBtn = document.getElementById('ahliPrevBtn');
+    const nextBtn = document.getElementById('ahliNextBtn');
+    const info = document.getElementById('ahliPageInfo');
+    const totalPages = Math.max(1, Math.ceil((total || 0) / ahliPageSize));
+    // Ensure ahliCurrentPage is within valid range and update it if needed
+    if (ahliCurrentPage > totalPages) ahliCurrentPage = totalPages;
+    if (ahliCurrentPage < 1) ahliCurrentPage = 1;
+    const page = ahliCurrentPage;
+    if (info) info.textContent = `Halaman ${page} / ${totalPages}`;
+    if (prevBtn) prevBtn.disabled = page <= 1;
+    if (nextBtn) nextBtn.disabled = page >= totalPages;
 }
 
 let pendingAhliDelete = null;
@@ -921,8 +983,11 @@ function openListMember() {
     // ensure form is hidden when opening list
     const form = document.getElementById('ahliFormContainer');
     const btn = document.getElementById('toggleAhliFormBtn');
+    const searchFilters = document.getElementById('ahliSearchFilters');
     if (form && !form.classList.contains('hidden')) { form.classList.add('hidden'); }
     if (btn) { btn.textContent = 'Tambah Ahli'; }
+    // ensure search filters are visible when opening list
+    if (searchFilters) searchFilters.style.display = 'flex';
     fetchAhli();
 }
 
@@ -934,16 +999,56 @@ function closeListMember() {
 function toggleAhliForm() {
     const formContainer = document.getElementById('ahliFormContainer');
     const toggleBtn = document.getElementById('toggleAhliFormBtn');
+    const searchFilters = document.getElementById('ahliSearchFilters');
     if (!formContainer || !toggleBtn) return;
     if (formContainer.classList.contains('hidden')) {
         formContainer.classList.remove('hidden');
         toggleBtn.textContent = 'Tutup Form';
+        // Hide search filters when form is shown
+        if (searchFilters) searchFilters.style.display = 'none';
     } else {
         formContainer.classList.add('hidden');
         toggleBtn.textContent = 'Tambah Ahli';
+        // Show search filters when form is closed
+        if (searchFilters) searchFilters.style.display = 'flex';
         const f = document.getElementById('ahliForm');
         if (f) f.reset();
     }
+}
+
+function applyAhliFilters() {
+    const nameSearch = (document.getElementById('ahliSearchName')?.value || '').trim().toLowerCase();
+    const idNoSearch = (document.getElementById('ahliSearchIdNo')?.value || '').trim().toLowerCase();
+    
+    let filtered = ahliAllItems.slice();
+    
+    // Filter by name
+    if (nameSearch) {
+        filtered = filtered.filter(a => {
+            const fullName = (a.fullName || '').toLowerCase();
+            return fullName.includes(nameSearch);
+        });
+    }
+    
+    // Filter by ID number
+    if (idNoSearch) {
+        filtered = filtered.filter(a => {
+            const idNo = (a.idNo || '').toLowerCase();
+            return idNo.includes(idNoSearch);
+        });
+    }
+    
+    ahliFilteredItems = filtered;
+    ahliCurrentPage = 1; // Reset to first page when filtering
+    renderAhliPage();
+}
+
+function clearAhliFilters() {
+    const nameInput = document.getElementById('ahliSearchName');
+    const idNoInput = document.getElementById('ahliSearchIdNo');
+    if (nameInput) nameInput.value = '';
+    if (idNoInput) idNoInput.value = '';
+    applyAhliFilters();
 }
 
 // Handle ahli form submit
