@@ -833,7 +833,7 @@ function renderAhli(items, startIndex = 0) {
     if (!items.length) {
         const tr = document.createElement('tr');
         const td = document.createElement('td');
-        td.colSpan = 10;
+        td.colSpan = 11;
         td.style.padding = '12px';
         td.textContent = 'Tiada ahli.';
         tr.appendChild(td);
@@ -861,6 +861,46 @@ function renderAhli(items, startIndex = 0) {
             td.textContent = val;
             tr.appendChild(td);
         });
+        // Kehadiran (Remark) button with persistent color state
+        const tdAttendance = document.createElement('td');
+        tdAttendance.style.padding = '8px';
+        const attBtn = document.createElement('button');
+        attBtn.textContent = 'Remark';
+        attBtn.style.color = '#fff';
+        attBtn.style.border = 'none';
+        attBtn.style.cursor = 'pointer';
+        attBtn.style.padding = '6px 10px';
+        attBtn.style.borderRadius = '4px';
+        // Load saved state
+        const attendanceKey = a && (a._id || a.idNo || a.email || `idx-${startIndex + idx}`);
+        const mapRaw = localStorage.getItem('ahliAttendance') || '{}';
+        let attendanceMap;
+        try { attendanceMap = JSON.parse(mapRaw) || {}; } catch { attendanceMap = {}; }
+        let state = attendanceMap[attendanceKey] || 'none'; // 'none' | 'hadir' | 'tidak'
+        const applyState = (s) => {
+            if (s === 'hadir') {
+                attBtn.style.backgroundColor = '#28a745';
+                attBtn.title = 'Hadir';
+                attBtn.textContent = 'Hadir';
+            } else if (s === 'tidak') {
+                attBtn.style.backgroundColor = '#dc3545';
+                attBtn.title = 'Tidak Hadir';
+                attBtn.textContent = 'Tidak Hadir';
+            } else {
+                attBtn.style.backgroundColor = '#0d6efd';
+                attBtn.title = 'Remark';
+                attBtn.textContent = 'Remark';
+            }
+        };
+        applyState(state);
+        attBtn.onclick = () => {
+            state = state === 'none' ? 'hadir' : (state === 'hadir' ? 'tidak' : 'none');
+            attendanceMap[attendanceKey] = state;
+            localStorage.setItem('ahliAttendance', JSON.stringify(attendanceMap));
+            applyState(state);
+        };
+        tdAttendance.appendChild(attBtn);
+        tr.appendChild(tdAttendance);
         const tdAction = document.createElement('td');
         tdAction.style.padding = '8px';
         const btn = document.createElement('button');

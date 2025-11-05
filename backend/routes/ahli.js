@@ -98,6 +98,50 @@ router.delete('/:id', authenticate, requireAdmin, async (req, res) => {
   }
 });
 
+// Update Ahli
+router.put('/:id', authenticate, requireAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { idNo, fullName, icNumber, phoneNumber, email, address, gender, job } = req.body;
+
+    const allowedGenders = ['Lelaki', 'Perempuan'];
+    const allowedJobs = [
+      'Keselamatan',
+      'Perkhidmatan & Hospitaliti',
+      'Pertanian & Alam Sekitar',
+      'Undang-Undang & Pendtadbiran',
+      'Seni & Kreatif',
+      'Perniagaan & Kewangan',
+      'Pendidikan & Latihan',
+      'Sains & Kesihatan',
+      'Teknologi Maklumat',
+      'Teknikal & Kejuruteraan'
+    ];
+
+    const update = {};
+    if (typeof idNo === 'string' && idNo.trim()) update.idNo = idNo.trim();
+    if (typeof fullName === 'string' && fullName.trim()) update.fullName = fullName.trim();
+    if (typeof icNumber === 'string') update.icNumber = icNumber.trim();
+    if (typeof phoneNumber === 'string') update.phoneNumber = phoneNumber.trim();
+    if (typeof email === 'string') update.email = email.trim();
+    if (typeof address === 'string') update.address = address.trim();
+    if (typeof gender === 'string' && allowedGenders.includes(gender)) update.gender = gender;
+    if (typeof job === 'string' && allowedJobs.includes(job)) update.job = job;
+
+    const updated = await Ahli.findByIdAndUpdate(id, update, { new: true });
+    if (!updated) {
+      return res.status(404).json({ success: false, message: 'Ahli not found' });
+    }
+    res.json({ success: true, message: 'Ahli updated', ahli: updated });
+  } catch (error) {
+    console.error('Update Ahli error:', error);
+    if (error && error.code === 11000) {
+      return res.status(400).json({ success: false, message: 'Duplicate idNo' });
+    }
+    res.status(500).json({ success: false, message: 'Server error updating Ahli' });
+  }
+});
+
 module.exports = router;
 
 
