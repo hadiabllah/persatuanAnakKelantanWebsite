@@ -865,7 +865,7 @@ function renderAhli(items, startIndex = 0) {
         const tdAttendance = document.createElement('td');
         tdAttendance.style.padding = '8px';
         const attBtn = document.createElement('button');
-        attBtn.textContent = 'Remark';
+        attBtn.textContent = 'Kehadiran';
         attBtn.style.color = '#fff';
         attBtn.style.border = 'none';
         attBtn.style.cursor = 'pointer';
@@ -888,8 +888,8 @@ function renderAhli(items, startIndex = 0) {
                 attBtn.textContent = 'Tidak Hadir';
             } else {
                 attBtn.style.backgroundColor = '#0d6efd';
-                attBtn.title = 'Remark';
-                attBtn.textContent = 'Remark';
+                attBtn.title = 'Kehadiran';
+                attBtn.textContent = 'Kehadiran';
             }
         };
         applyState(state);
