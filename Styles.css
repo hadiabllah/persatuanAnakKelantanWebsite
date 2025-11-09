@@ -106,8 +106,8 @@ body.page-mainmenu {
 
 /* Main Menu Styles */
 .menu-container {
-    width: 100%;
-    max-width: 1400px;
+    width: 120%;
+    max-width: 1600px;
     min-height: 100vh;
     margin: 0 auto;
     padding: 24px;
