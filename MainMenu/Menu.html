@@ -352,6 +352,10 @@
                         <label for="ahliSearchIdNo" style="display:block; margin-bottom:4px; font-weight:500;">Cari Nombor Ahli</label>
                         <input id="ahliSearchIdNo" type="text" placeholder="Masukkan nombor ahli..." style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
                     </div>
+                    <div style="flex:1; min-width:200px;">
+                        <label for="ahliSearchIC" style="display:block; margin-bottom:4px; font-weight:500;">Cari Nombor IC</label>
+                        <input id="ahliSearchIC" type="text" placeholder="Masukkan nombor IC..." style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+                    </div>
                     <div>
                         <button type="button" class="logout-btn" onclick="clearAhliFilters()" style="padding:8px 16px;">Set Semula</button>
                     </div>
@@ -439,9 +443,11 @@
                         </tbody>
                     </table>
                     <div id="ahliPagination" style="display:flex; justify-content:flex-end; align-items:center; gap:8px; margin-top:12px;">
+                        <button type="button" class="logout-btn" id="ahliFirstBtn">Awal</button>
                         <button type="button" class="logout-btn" id="ahliPrevBtn">Sebelum</button>
                         <span id="ahliPageInfo" style="min-width:120px; text-align:center;">Halaman 1 / 1</span>
                         <button type="button" class="menu-btn" id="ahliNextBtn">Seterusnya</button>
+                        <button type="button" class="menu-btn" id="ahliLastBtn">Akhir</button>
                     </div>
                 </div>
             </div>

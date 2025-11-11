@@ -159,14 +159,20 @@ document.addEventListener('DOMContentLoaded', function() {
     // Ahli pagination buttons
     const ahliPrevBtn = document.getElementById('ahliPrevBtn');
     const ahliNextBtn = document.getElementById('ahliNextBtn');
+    const ahliFirstBtn = document.getElementById('ahliFirstBtn');
+    const ahliLastBtn = document.getElementById('ahliLastBtn');
     if (ahliPrevBtn) ahliPrevBtn.addEventListener('click', () => changeAhliPage(-1));
     if (ahliNextBtn) ahliNextBtn.addEventListener('click', () => changeAhliPage(1));
+    if (ahliFirstBtn) ahliFirstBtn.addEventListener('click', () => goToAhliPage(1));
+    if (ahliLastBtn) ahliLastBtn.addEventListener('click', () => goToAhliLastPage());
     
     // Ahli search filters
     const ahliSearchName = document.getElementById('ahliSearchName');
     const ahliSearchIdNo = document.getElementById('ahliSearchIdNo');
+    const ahliSearchIC = document.getElementById('ahliSearchIC');
     if (ahliSearchName) ahliSearchName.addEventListener('input', applyAhliFilters);
     if (ahliSearchIdNo) ahliSearchIdNo.addEventListener('input', applyAhliFilters);
+    if (ahliSearchIC) ahliSearchIC.addEventListener('input', applyAhliFilters);
 });
 
 // Fetch and render users
@@ -953,9 +959,26 @@ function changeAhliPage(delta) {
     }
 }
 
+function goToAhliPage(page) {
+    const total = ahliFilteredItems.length;
+    const totalPages = Math.max(1, Math.ceil(total / ahliPageSize));
+    const target = Math.min(Math.max(1, page), totalPages);
+    if (target !== ahliCurrentPage) {
+        ahliCurrentPage = target;
+        renderAhliPage();
+    }
+}
+
+function goToAhliLastPage() {
+    const total = ahliFilteredItems.length;
+    const totalPages = Math.max(1, Math.ceil(total / ahliPageSize));
+    goToAhliPage(totalPages);
+}
 function updateAhliPaginationControls(total) {
     const prevBtn = document.getElementById('ahliPrevBtn');
     const nextBtn = document.getElementById('ahliNextBtn');
+    const firstBtn = document.getElementById('ahliFirstBtn');
+    const lastBtn = document.getElementById('ahliLastBtn');
     const info = document.getElementById('ahliPageInfo');
     const totalPages = Math.max(1, Math.ceil((total || 0) / ahliPageSize));
     // Ensure ahliCurrentPage is within valid range and update it if needed
@@ -965,6 +988,8 @@ function updateAhliPaginationControls(total) {
     if (info) info.textContent = `Halaman ${page} / ${totalPages}`;
     if (prevBtn) prevBtn.disabled = page <= 1;
     if (nextBtn) nextBtn.disabled = page >= totalPages;
+    if (firstBtn) firstBtn.disabled = page <= 1;
+    if (lastBtn) lastBtn.disabled = page >= totalPages;
 }
 
 let pendingAhliDelete = null;
@@ -1159,6 +1184,7 @@ function toggleAhliForm() {
 function applyAhliFilters() {
     const nameSearch = (document.getElementById('ahliSearchName')?.value || '').trim().toLowerCase();
     const idNoSearch = (document.getElementById('ahliSearchIdNo')?.value || '').trim().toLowerCase();
+    const icSearch = (document.getElementById('ahliSearchIC')?.value || '').trim().toLowerCase();
     
     let filtered = ahliAllItems.slice();
     
@@ -1178,6 +1204,14 @@ function applyAhliFilters() {
         });
     }
     
+    // Filter by IC number
+    if (icSearch) {
+        filtered = filtered.filter(a => {
+            const icNumber = (a.icNumber || '').toLowerCase();
+            return icNumber.includes(icSearch);
+        });
+    }
+    
     ahliFilteredItems = filtered;
     ahliCurrentPage = 1; // Reset to first page when filtering
     renderAhliPage();
@@ -1186,8 +1220,10 @@ function applyAhliFilters() {
 function clearAhliFilters() {
     const nameInput = document.getElementById('ahliSearchName');
     const idNoInput = document.getElementById('ahliSearchIdNo');
+    const icInput = document.getElementById('ahliSearchIC');
     if (nameInput) nameInput.value = '';
     if (idNoInput) idNoInput.value = '';
+    if (icInput) icInput.value = '';
     applyAhliFilters();
 }
 
