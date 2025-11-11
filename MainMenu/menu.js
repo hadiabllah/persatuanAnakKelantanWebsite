@@ -903,14 +903,27 @@ function renderAhli(items, startIndex = 0) {
         tr.appendChild(tdAttendance);
         const tdAction = document.createElement('td');
         tdAction.style.padding = '8px';
-        const btn = document.createElement('button');
-        btn.textContent = 'Padam';
-        btn.className = 'logout-btn';
-        btn.style.backgroundColor = '#dc3545';
-        btn.style.border = 'none';
-        btn.style.cursor = 'pointer';
-        btn.onclick = () => showAhliDeleteConfirmation(a._id, a.idNo || a.fullName || a.email);
-        tdAction.appendChild(btn);
+        // Edit button
+        const editBtn = document.createElement('button');
+        editBtn.textContent = 'Edit';
+        editBtn.style.backgroundColor = '#0d6efd';
+        editBtn.style.color = '#fff';
+        editBtn.style.border = 'none';
+        editBtn.style.cursor = 'pointer';
+        editBtn.style.padding = '6px 10px';
+        editBtn.style.borderRadius = '4px';
+        editBtn.style.marginRight = '6px';
+        editBtn.onclick = () => openAhliEditModal(a);
+        tdAction.appendChild(editBtn);
+        // Delete button
+        const delBtn = document.createElement('button');
+        delBtn.textContent = 'Padam';
+        delBtn.className = 'logout-btn';
+        delBtn.style.backgroundColor = '#dc3545';
+        delBtn.style.border = 'none';
+        delBtn.style.cursor = 'pointer';
+        delBtn.onclick = () => showAhliDeleteConfirmation(a._id, a.idNo || a.fullName || a.email);
+        tdAction.appendChild(delBtn);
         tr.appendChild(tdAction);
         tbody.appendChild(tr);
     });
@@ -1001,6 +1014,93 @@ async function deleteAhli(id, label, silent = false) {
     } catch (error) {
         console.error('Delete ahli error:', error);
         showMessage('Ralat memadam ahli.', true);
+    }
+}
+
+// ==== Ahli Edit Support ====
+let editingAhli = null;
+
+function openAhliEditModal(ahli) {
+    editingAhli = ahli || null;
+    const modal = document.getElementById('ahliEditModal');
+    if (!modal) return;
+    // Populate fields
+    const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ''; };
+    setVal('ae_idno', ahli?.idNo);
+    setVal('ae_fullName', ahli?.fullName);
+    setVal('ae_ic', ahli?.icNumber);
+    setVal('ae_phone', ahli?.phoneNumber);
+    setVal('ae_email', ahli?.email);
+    setVal('ae_address', ahli?.address);
+    setVal('ae_gender', ahli?.gender);
+    setVal('ae_job', ahli?.job);
+    modal.classList.remove('hidden');
+}
+
+function hideAhliEditModal() {
+    const modal = document.getElementById('ahliEditModal');
+    if (modal) modal.classList.add('hidden');
+    editingAhli = null;
+    const form = document.getElementById('ahliEditForm');
+    if (form) form.reset();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const cancelBtn = document.getElementById('ahliEditCancelBtn');
+    if (cancelBtn) cancelBtn.addEventListener('click', hideAhliEditModal);
+    const form = document.getElementById('ahliEditForm');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            saveAhliEdit();
+        });
+    }
+});
+
+async function saveAhliEdit() {
+    if (!editingAhli || !editingAhli._id) {
+        showMessage('Ralat: Ahli tidak sah untuk dikemas kini.', true);
+        return;
+    }
+    try {
+        const form = document.getElementById('ahliEditForm');
+        if (!form) return;
+        const fd = new FormData(form);
+        const payload = {
+            idNo: (fd.get('idNo') || '').toString().trim(),
+            fullName: (fd.get('fullName') || '').toString().trim(),
+            icNumber: (fd.get('icNumber') || '').toString().trim(),
+            phoneNumber: (fd.get('phoneNumber') || '').toString().trim(),
+            email: (fd.get('email') || '').toString().trim(),
+            address: (fd.get('address') || '').toString().trim(),
+            gender: (fd.get('gender') || '').toString(),
+            job: (fd.get('job') || '').toString()
+        };
+        if (!payload.idNo || !payload.fullName) {
+            showMessage('Sila isi ID NO dan Nama Penuh.', true);
+            return;
+        }
+        const token = localStorage.getItem('token');
+        const response = await fetch(`${API_BASE}/ahli/${editingAhli._id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+        if (!response.ok || !data.success) {
+            const message = data && data.message ? data.message : 'Gagal mengemas kini ahli';
+            showMessage(message, true);
+            return;
+        }
+        showMessage('Maklumat ahli berjaya dikemas kini.');
+        hideAhliEditModal();
+        fetchAhli();
+    } catch (error) {
+        console.error('Update ahli error:', error);
+        showMessage('Ralat mengemas kini ahli.', true);
     }
 }
 

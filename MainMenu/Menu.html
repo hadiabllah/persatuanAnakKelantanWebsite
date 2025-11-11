@@ -120,6 +120,69 @@
 					</div>
 				</div>
 
+				<!-- Ahli Edit Modal -->
+				<div id="ahliEditModal" class="modal hidden">
+					<div class="modal-content" style="max-width:720px;">
+						<h3 class="modal-title">Edit Maklumat Ahli</h3>
+						<form id="ahliEditForm">
+							<div class="form-grid">
+								<div class="form-field">
+									<label for="ae_idno">Nombor Ahli</label>
+									<input id="ae_idno" name="idNo" type="text" class="form-input" required>
+								</div>
+								<div class="form-field">
+									<label for="ae_fullName">Nama Penuh</label>
+									<input id="ae_fullName" name="fullName" type="text" class="form-input" required>
+								</div>
+								<div class="form-field">
+									<label for="ae_ic">Nombor IC</label>
+									<input id="ae_ic" name="icNumber" type="text" class="form-input">
+								</div>
+								<div class="form-field">
+									<label for="ae_phone">Telefon</label>
+									<input id="ae_phone" name="phoneNumber" type="text" class="form-input">
+								</div>
+								<div class="form-field">
+									<label for="ae_email">Email</label>
+									<input id="ae_email" name="email" type="email" class="form-input">
+								</div>
+								<div class="form-field full-width">
+									<label for="ae_address">Alamat</label>
+									<input id="ae_address" name="address" type="text" class="form-input">
+								</div>
+								<div class="form-field">
+									<label for="ae_gender">Jantina</label>
+									<select id="ae_gender" name="gender" class="form-input">
+										<option value="">Pilih jantina</option>
+										<option value="Lelaki">Lelaki</option>
+										<option value="Perempuan">Perempuan</option>
+									</select>
+								</div>
+								<div class="form-field">
+									<label for="ae_job">Pekerjaan</label>
+									<select id="ae_job" name="job" class="form-input">
+										<option value="">Pilih bidang pekerjaan</option>
+										<option value="Keselamatan">Keselamatan</option>
+										<option value="Perkhidmatan & Hospitaliti">Perkhidmatan & Hospitaliti</option>
+										<option value="Pertanian & Alam Sekitar">Pertanian & Alam Sekitar</option>
+										<option value="Undang-Undang & Pendtadbiran">Undang-Undang & Pendtadbiran</option>
+										<option value="Seni & Kreatif">Seni & Kreatif</option>
+										<option value="Perniagaan & Kewangan">Perniagaan & Kewangan</option>
+										<option value="Pendidikan & Latihan">Pendidikan & Latihan</option>
+										<option value="Sains & Kesihatan">Sains & Kesihatan</option>
+										<option value="Teknologi Maklumat">Teknologi Maklumat</option>
+										<option value="Teknikal & Kejuruteraan">Teknikal & Kejuruteraan</option>
+									</select>
+								</div>
+							</div>
+							<div class="modal-buttons" style="margin-top:12px;">
+								<button id="ahliEditSaveBtn" type="submit" class="btn-confirm">Simpan</button>
+								<button id="ahliEditCancelBtn" type="button" class="btn-cancel">Batal</button>
+							</div>
+						</form>
+					</div>
+				</div>
+
                 <!-- Ahli Delete Confirmation Modal -->
                 <div id="ahliDeleteConfirmModal" class="modal hidden">
                     <div class="modal-content">
