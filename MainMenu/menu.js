@@ -912,13 +912,7 @@ function renderAhli(items, startIndex = 0) {
         // Edit button
         const editBtn = document.createElement('button');
         editBtn.textContent = 'Edit';
-        editBtn.style.backgroundColor = '#0d6efd';
-        editBtn.style.color = '#fff';
-        editBtn.style.border = 'none';
-        editBtn.style.cursor = 'pointer';
-        editBtn.style.padding = '6px 10px';
-        editBtn.style.borderRadius = '4px';
-        editBtn.style.marginRight = '6px';
+        editBtn.className = 'edit-btn';
         editBtn.onclick = () => openAhliEditModal(a);
         tdAction.appendChild(editBtn);
         // Delete button
@@ -1257,6 +1251,19 @@ async function addAhli() {
         if (!payload.idNo || !payload.fullName) {
             showMessage('Sila isi ID NO dan Nama Penuh.', true);
             return;
+        }
+
+        // Check for duplicate IC number
+        if (payload.icNumber) {
+            const duplicateAhli = ahliAllItems.find(a => {
+                const existingIC = (a.icNumber || '').toString().trim().toLowerCase();
+                const newIC = payload.icNumber.toLowerCase();
+                return existingIC === newIC && existingIC !== '';
+            });
+            if (duplicateAhli) {
+                showMessage('Nombor IC ini sudah wujud dalam senarai ahli. Sila gunakan nombor IC yang berbeza.', true);
+                return;
+            }
         }
 
         const token = localStorage.getItem('token');
